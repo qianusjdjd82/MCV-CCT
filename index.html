@@ -1,41 +1,27 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多人在线编辑器</title>
+    <title>CCT Project —— Chapter 9</title>
 </head>
-
 <body>
 
-    <h1>多人在线编辑器</h1>
+    <!-- 主标题 -->
+    <h1>CCT Project —— Chapter 9</h1>
+    <h2>多人在线编辑器</h2>
 
-    <textarea id="editor" 
-        placeholder="在这里输入内容..."
-        style="width: 500px; height: 300px; font-size: 18px;">
-    </textarea>
+    <!-- 文本编辑框（去除了内部多余的空格与换行） -->
+    <textarea id="editor" placeholder="在这里输入内容..." style="width: 500px; height: 300px; font-size: 18px;"></textarea>
 
     <p id="status">正在连接 Firebase...</p>
 
-
     <!-- Firebase -->
     <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-        // Firebase
-        import { initializeApp } from 
-        "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-
-        import { 
-            getDatabase, 
-            ref, 
-            set, 
-            onValue 
-        } from 
-        "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-
-
-        // 你的 Firebase 配置
+        // Firebase 配置
         const firebaseConfig = {
             apiKey: "AIzaSyAysNBYZcjoONa5Mhdw4LeO6GlfV_1Vg04",
             authDomain: "mcv-cct.firebaseapp.com",
@@ -47,50 +33,27 @@
             measurementId: "G-YLBY11B0GX"
         };
 
-
-        // 初始化 Firebase
+        // 初始化 Firebase 与数据库
         const app = initializeApp(firebaseConfig);
-
-        // 连接 Realtime Database
         const database = getDatabase(app);
-
-
-        // 我们在数据库里创建一个叫 "editor" 的位置
         const editorRef = ref(database, "editor");
-
 
         const editor = document.getElementById("editor");
         const status = document.getElementById("status");
 
-
-        // =========================
-        // 读取 Firebase 数据
-        // =========================
-
+        // 监听 Firebase 数据变动
         onValue(editorRef, (snapshot) => {
-
             const data = snapshot.val();
-
             if (data !== null) {
                 editor.value = data;
             }
-
             status.textContent = "Firebase 已连接 ✓";
-
         });
 
-
-        // =========================
-        // 把输入内容保存到 Firebase
-        // =========================
-
+        // 保存输入内容到 Firebase
         editor.addEventListener("input", () => {
-
             set(editorRef, editor.value);
-
         });
-
     </script>
-
 </body>
 </html>
