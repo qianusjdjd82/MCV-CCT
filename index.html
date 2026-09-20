@@ -1,59 +1,188 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CCT Project —— Chapter 9</title>
+    <title>Chapter 9‑Relationships between Points, Lines, and Planes</title>
+    <!-- MathJax for math formulas -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif;}
+        body{background-color:#f7f9fc;color:#222;line-height:1.65;max-width:1100px;margin:0 auto;padding-bottom:60px;}
+        header{background:#2c4260;color:#fff;padding:30px 24px;}
+        h1{font-size:26px;margin-bottom:8px;}
+        .subtitle{opacity:0.92;font-size:16px;}
+        nav{background:#3c577a;padding:14px 20px;position:sticky;top:0;z-index:100;}
+        nav a{color:#ffffff;margin:0 7px;text-decoration:none;font-size:14.5px;}
+        nav a:hover{text-decoration:underline;}
+        main{padding:28px 24px;}
+        section{margin-bottom:48px;background:#ffffff;padding:24px;border-radius:10px;box-shadow:0 1px 6px #d7dde6;}
+        h2{color:#2c4260;border-bottom:solid 2px #cad4e2;padding-bottom:7px;margin-bottom:18px;}
+        h3{margin-top:20px;margin-bottom:10px;color:#364e70;}
+        .def-block{background:#e8f1fc;padding:14px;border-left:6px solid #4472b9;border-radius:6px;margin:12px 0;}
+        .concept-block{background:#f3f7fb;padding:14px;border-left:6px solid #509368;border-radius:6px;margin:12px 0;}
+        .formula-block{background:#fff7e8;padding:14px;border-left:6px solid #d6942c;border-radius:6px;margin:12px 0;}
+        .example-block{background:#f4ecf9;padding:14px;border-left:6px solid #9c68b8;border-radius:6px;margin:12px 0;}
+        .warning{background:#ffe9e9;padding:12px;border-radius:6px;margin:10px 0;border:1px solid #f7bbbb;}
+        .summary-box{background:#eef4ff;padding:18px;border-radius:8px;margin-top:22px;}
+        .editor-container{display:flex;flex-direction:column;gap:12px;margin-top:12px;}
+        .editor-textarea{width:100%;height:320px;font-size:16px;padding:12px;border:1px solid #cad4e2;border-radius:6px;resize:vertical;font-family:inherit;}
+        .editor-status{font-weight:600;color:#364e70;}
+        footer{text-align:center;color:#666;font-size:14px;}
+    </style>
 </head>
 <body>
+<header>
+    <h1>Chapter 9 Relationships between Points, Lines, and Planes</h1>
+    <div class="subtitle">Nelson Calculus and Vectors 12 — Preview Website for CCT Assignment</div>
+</header>
+<nav>
+    <a href="#home">Home‑Overview</a>
+    <a href="#sec9‑1">9.1</a>
+    <a href="#sec9‑2">9.2</a>
+    <a href="#sec9‑3">9.3</a>
+    <a href="#sec9‑4">9.4</a>
+    <a href="#sec9‑5">9.5</a>
+    <a href="#sec9‑6">9.6</a>
+    <a href="#reference">Formula Reference</a>
+    <a href="#practice">Preview Practice</a>
+    <a href="#text">Text</a>
+</nav>
+<main>
+    <section id="home">
+        <h2>Chapter Overview</h2>
+        <p>This chapter builds on Chapter8 (equations for lines and planes in 3‑space). We analyse geometric relationships: intersection, parallel and coincident cases for lines and planes. We also solve linear systems and calculate perpendicular shortest distance between points, lines and planes.</p>
+        <h3>Learning Goals</h3>
+        <ul style="margin-left:22px;">
+            <li>Identify all possible intersection cases for lines and planes in \(R^3\)</li>
+            <li>Solve systems of linear equations and link algebraic results to 3D‑geometry</li>
+            <li>Apply distance formulas for point‑to‑line and point‑to‑plane</li>
+        </ul>
+        <div class="summary-box">
+            <strong>Big Idea of Chapter9:</strong> Connect 3‑D space geometry with linear algebra. The number of solutions (0, one, infinitely many) of a linear system tells us how these lines and planes intersect. Finally we compute perpendicular shortest distances.
+        </div>
+    </section>
 
-    <!-- 主标题 -->
-    <h1>CCT Project —— Chapter 9</h1>
-    <h2>多人在线编辑器</h2>
+    <section id="sec9‑1">
+        <h2>9.1 The Intersection of a Line with a Plane and the Intersection of Two Lines</h2>
+        <h3>Definition</h3>
+        <div class="def-block">
+            <ul style="margin-left:20px;">
+                <li><strong>Skew lines:</strong> Two lines in \(R^3\) that are not parallel and do not intersect. Skew lines only exist in 3‑dimensional space.</li>
+                <li><strong>Intersecting lines:</strong> Two lines share exactly one common point.</li>
+                <li><strong>Coincident lines:</strong> Two lines lie exactly on top of each other; infinitely many shared points.</li>
+                <li><strong>Parallel lines:</strong> Direction vectors are scalar multiples of each other.</li>
+            </ul>
+        </div>
+        <h3>Core Concepts</h3>
+        <div class="concept-block">
+            <p>Possible cases for two lines in \(R^3\):
+                <br>1. Intersect at exactly one point; &nbsp;2. Coincident; &nbsp;3. Parallel distinct; &nbsp;4. Skew (only for R³).
+            </p>
+            <p>Possible cases for a line and a plane:</p>
+            <ol style="margin-left:20px;">
+                <li>Intersect at one single point</li>
+                <li>Line is parallel to the plane with no intersection</li>
+                <li>The entire line lies inside the plane (infinitely many intersection points)</li>
+            </ol>
+            <p><strong>Solving strategy:</strong> Substitute the parametric equations of the line into the Cartesian plane equation, solve for parameter t, judge cases from the number of valid t‑solutions.</p>
+        </div>
+        <h3>Important Formulas</h3>
+        <div class="formula-block">
+            <p>Vector equation for line: \(\vec r=\vec r_0 + t\vec d\)</p>
+            <p>Parametric line: \(x=x_0+t d_x,\ y=y_0+t d_y,\ z=z_0+t d_z\)</p>
+            <p>Cartesian plane: \(Ax+By+Cz+D=0\)</p>
+        </div>
+        <h3>Quick Example</h3>
+        <div class="example-block">
+            <p>Given a line’s parametric equations, substitute x,y,z into plane’s Cartesian equation. If you get one value for t → one intersection point. If t cancels and you get a true statement (0=0), the line lies on the plane.</p>
+        </div>
+    </section>
 
-    <!-- 文本编辑框（去除了内部多余的空格与换行） -->
-    <textarea id="editor" placeholder="在这里输入内容..." style="width: 500px; height: 300px; font-size: 18px;"></textarea>
+    <section id="sec9‑2">
+        <h2>9.2 Systems of Equations</h2>
+        <!-- Content reserved for later editing -->
+    </section>
 
-    <p id="status">正在连接 Firebase...</p>
+    <section id="sec9‑3">
+        <h2>9.3 The Intersection of Two Planes</h2>
+        <!-- Content reserved for later editing -->
+    </section>
 
-    <!-- Firebase -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+    <section id="sec9‑4">
+        <h2>9.4 The Intersection of Three Planes</h2>
+        <!-- Content reserved for later editing -->
+    </section>
 
-        // Firebase 配置
-        const firebaseConfig = {
-            apiKey: "AIzaSyAysNBYZcjoONa5Mhdw4LeO6GlfV_1Vg04",
-            authDomain: "mcv-cct.firebaseapp.com",
-            databaseURL: "https://mcv-cct-default-rtdb.firebaseio.com",
-            projectId: "mcv-cct",
-            storageBucket: "mcv-cct.firebasestorage.app",
-            messagingSenderId: "595634242245",
-            appId: "1:595634242245:web:3f3d82c28c04b6bdcfe6ac",
-            measurementId: "G-YLBY11B0GX"
-        };
+    <section id="sec9‑5">
+        <h2>9.5 The Distance from a Point to a Line in R² and R³</h2>
+        <!-- Content reserved for later editing -->
+    </section>
 
-        // 初始化 Firebase 与数据库
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
-        const editorRef = ref(database, "editor");
+    <section id="sec9‑6">
+        <h2>9.6 The Distance from a Point to a Plane</h2>
+        <!-- Content reserved for later editing -->
+    </section>
 
-        const editor = document.getElementById("editor");
-        const status = document.getElementById("status");
+    <section id="reference">
+        <h2>Formula &amp; Definition Reference Page</h2>
+        <!-- Content reserved for later editing -->
+    </section>
 
-        // 监听 Firebase 数据变动
-        onValue(editorRef, (snapshot) => {
-            const data = snapshot.val();
-            if (data !== null) {
-                editor.value = data;
-            }
-            status.textContent = "Firebase 已连接 ✓";
-        });
+    <section id="practice">
+        <h2>Preview Practice (Self‑Check for Preview)</h2>
+        <!-- Content reserved for later editing -->
+    </section>
 
-        // 保存输入内容到 Firebase
-        editor.addEventListener("input", () => {
-            set(editorRef, editor.value);
-        });
-    </script>
+    <!-- 新增多人在线协同文本框模块 -->
+    <section id="text">
+        <h2>Text (Collaborative Editor)</h2>
+        <div class="editor-container">
+            <textarea id="editor" class="editor-textarea" placeholder="在这里输入内容..."></textarea>
+            <p id="status" class="editor-status">正在连接 Firebase...</p>
+        </div>
+    </section>
+</main>
+<footer>
+CCT Assignment — Nelson Calculus &amp; Vectors 12 Chapter9 Preview Website
+</footer>
+
+<!-- Firebase 协同逻辑 -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAysNBYZcjoONa5Mhdw4LeO6GlfV_1Vg04",
+        authDomain: "mcv-cct.firebaseapp.com",
+        databaseURL: "https://mcv-cct-default-rtdb.firebaseio.com",
+        projectId: "mcv-cct",
+        storageBucket: "mcv-cct.firebasestorage.app",
+        messagingSenderId: "595634242245",
+        appId: "1:595634242245:web:3f3d82c28c04b6bdcfe6ac",
+        measurementId: "G-YLBY11B0GX"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const editorRef = ref(database, "editor");
+
+    const editor = document.getElementById("editor");
+    const status = document.getElementById("status");
+
+    // 实时读取数据库变动
+    onValue(editorRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data !== null) {
+            editor.value = data;
+        }
+        status.textContent = "Firebase 已连接 ✓";
+    });
+
+    // 实时同步变动至数据库
+    editor.addEventListener("input", () => {
+        set(editorRef, editor.value);
+    });
+</script>
 </body>
 </html>
