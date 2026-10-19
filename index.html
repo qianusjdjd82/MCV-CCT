@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chapter 9‑Relationships between Points, Lines, and Planes</title>
+    <title>Chapter 9 - Relationships between Points, Lines, and Planes</title>
     <!-- MathJax for math formulas -->
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
@@ -12,9 +12,9 @@
         header{background:#2c4260;color:#fff;padding:30px 24px;}
         h1{font-size:26px;margin-bottom:8px;}
         .subtitle{opacity:0.92;font-size:16px;}
-        nav{background:#3c577a;padding:14px 20px;position:sticky;top:0;z-index:100;}
-        nav a{color:#ffffff;margin:0 7px;text-decoration:none;font-size:14.5px;}
-        nav a:hover{text-decoration:underline;}
+        nav{background:#3c577a;padding:14px 20px;position:sticky;top:0;z-index:100;display:flex;flex-wrap:wrap;gap:6px;}
+        nav a{color:#ffffff;text-decoration:none;font-size:13.5px;padding:4px 8px;border-radius:4px;}
+        nav a:hover{background:rgba(255,255,255,0.2);text-decoration:underline;}
         main{padding:28px 24px;}
         section{margin-bottom:48px;background:#ffffff;padding:24px;border-radius:10px;box-shadow:0 1px 6px #d7dde6;}
         h2{color:#2c4260;border-bottom:solid 2px #cad4e2;padding-bottom:7px;margin-bottom:18px;}
@@ -23,8 +23,15 @@
         .concept-block{background:#f3f7fb;padding:14px;border-left:6px solid #509368;border-radius:6px;margin:12px 0;}
         .formula-block{background:#fff7e8;padding:14px;border-left:6px solid #d6942c;border-radius:6px;margin:12px 0;}
         .example-block{background:#f4ecf9;padding:14px;border-left:6px solid #9c68b8;border-radius:6px;margin:12px 0;}
-        .warning{background:#ffe9e9;padding:12px;border-radius:6px;margin:10px 0;border:1px solid #f7bbbb;}
         .summary-box{background:#eef4ff;padding:18px;border-radius:8px;margin-top:22px;}
+        
+        /* 练习题与答案折叠样式 */
+        .practice-subsection{margin-bottom:30px;}
+        .practice-question{background:#fafbfc;border:1px solid #e1e4e8;padding:15px;border-radius:6px;margin-bottom:12px;}
+        .answer-btn{background:#4472b9;color:white;border:none;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:13.5px;margin-top:10px;font-weight:600;transition:background 0.2s;}
+        .answer-btn:hover{background:#325c99;}
+        .answer-content{display:none;margin-top:10px;padding:12px;background:#eef4ff;border-left:4px solid #4472b9;border-radius:4px;font-size:14.5px;}
+
         .editor-container{display:flex;flex-direction:column;gap:12px;margin-top:12px;}
         .editor-textarea{width:100%;height:320px;font-size:16px;padding:12px;border:1px solid #cad4e2;border-radius:6px;resize:vertical;font-family:inherit;}
         .editor-status{font-weight:600;color:#364e70;}
@@ -33,17 +40,17 @@
 </head>
 <body>
 <header>
-    <h1>Chapter 9 Relationships between Points, Lines, and Planes</h1>
+    <h1>Chapter 9: Relationships between Points, Lines, and Planes</h1>
     <div class="subtitle">Nelson Calculus and Vectors 12 — Preview Website for CCT Assignment</div>
 </header>
 <nav>
-    <a href="#home">Home‑Overview</a>
-    <a href="#sec9‑1">9.1</a>
-    <a href="#sec9‑2">9.2</a>
-    <a href="#sec9‑3">9.3</a>
-    <a href="#sec9‑4">9.4</a>
-    <a href="#sec9‑5">9.5</a>
-    <a href="#sec9‑6">9.6</a>
+    <a href="#home">Home-Overview</a>
+    <a href="#sec9-1">9.1 Line & Plane / Two Lines</a>
+    <a href="#sec9-2">9.2 Systems of Equations</a>
+    <a href="#sec9-3">9.3 Two Planes</a>
+    <a href="#sec9-4">9.4 Three Planes</a>
+    <a href="#sec9-5">9.5 Point to Line</a>
+    <a href="#sec9-6">9.6 Point to Plane</a>
     <a href="#reference">Formula Reference</a>
     <a href="#practice">Preview Practice</a>
     <a href="#text">Text</a>
@@ -51,24 +58,24 @@
 <main>
     <section id="home">
         <h2>Chapter Overview</h2>
-        <p>This chapter builds on Chapter8 (equations for lines and planes in 3‑space). We analyse geometric relationships: intersection, parallel and coincident cases for lines and planes. We also solve linear systems and calculate perpendicular shortest distance between points, lines and planes.</p>
+        <p>This chapter builds on Chapter 8 (equations for lines and planes in 3-space). We analyse geometric relationships: intersection, parallel and coincident cases for lines and planes. We also solve linear systems and calculate perpendicular shortest distance between points, lines and planes.</p>
         <h3>Learning Goals</h3>
         <ul style="margin-left:22px;">
             <li>Identify all possible intersection cases for lines and planes in \(R^3\)</li>
-            <li>Solve systems of linear equations and link algebraic results to 3D‑geometry</li>
-            <li>Apply distance formulas for point‑to‑line and point‑to‑plane</li>
+            <li>Solve systems of linear equations and link algebraic results to 3D-geometry</li>
+            <li>Apply distance formulas for point-to-line and point-to-plane</li>
         </ul>
         <div class="summary-box">
-            <strong>Big Idea of Chapter9:</strong> Connect 3‑D space geometry with linear algebra. The number of solutions (0, one, infinitely many) of a linear system tells us how these lines and planes intersect. Finally we compute perpendicular shortest distances.
+            <strong>Big Idea of Chapter 9:</strong> Connect 3-D space geometry with linear algebra. The number of solutions (0, one, infinitely many) of a linear system tells us how these lines and planes intersect. Finally we compute perpendicular shortest distances.
         </div>
     </section>
 
-    <section id="sec9‑1">
+    <section id="sec9-1">
         <h2>9.1 The Intersection of a Line with a Plane and the Intersection of Two Lines</h2>
         <h3>Definition</h3>
         <div class="def-block">
             <ul style="margin-left:20px;">
-                <li><strong>Skew lines:</strong> Two lines in \(R^3\) that are not parallel and do not intersect. Skew lines only exist in 3‑dimensional space.</li>
+                <li><strong>Skew lines:</strong> Two lines in \(R^3\) that are not parallel and do not intersect. Skew lines only exist in 3-dimensional space.</li>
                 <li><strong>Intersecting lines:</strong> Two lines share exactly one common point.</li>
                 <li><strong>Coincident lines:</strong> Two lines lie exactly on top of each other; infinitely many shared points.</li>
                 <li><strong>Parallel lines:</strong> Direction vectors are scalar multiples of each other.</li>
@@ -77,7 +84,7 @@
         <h3>Core Concepts</h3>
         <div class="concept-block">
             <p>Possible cases for two lines in \(R^3\):
-                <br>1. Intersect at exactly one point; &nbsp;2. Coincident; &nbsp;3. Parallel distinct; &nbsp;4. Skew (only for R³).
+                <br>1. Intersect at exactly one point; &nbsp;2. Coincident; &nbsp;3. Parallel distinct; &nbsp;4. Skew (only for \(R^3\)).
             </p>
             <p>Possible cases for a line and a plane:</p>
             <ol style="margin-left:20px;">
@@ -85,56 +92,222 @@
                 <li>Line is parallel to the plane with no intersection</li>
                 <li>The entire line lies inside the plane (infinitely many intersection points)</li>
             </ol>
-            <p><strong>Solving strategy:</strong> Substitute the parametric equations of the line into the Cartesian plane equation, solve for parameter t, judge cases from the number of valid t‑solutions.</p>
+            <p><strong>Solving strategy:</strong> Substitute the parametric equations of the line into the Cartesian plane equation, solve for parameter \(t\), judge cases from the number of valid \(t\)-solutions.</p>
         </div>
         <h3>Important Formulas</h3>
         <div class="formula-block">
-            <p>Vector equation for line: \(\vec r=\vec r_0 + t\vec d\)</p>
-            <p>Parametric line: \(x=x_0+t d_x,\ y=y_0+t d_y,\ z=z_0+t d_z\)</p>
-            <p>Cartesian plane: \(Ax+By+Cz+D=0\)</p>
+            <p>Vector equation for line: \(\vec{r} = \vec{r}_0 + t\vec{d}\)</p>
+            <p>Parametric line: \(x = x_0 + td_x,\ y = y_0 + td_y,\ z = z_0 + td_z\)</p>
+            <p>Cartesian plane: \(Ax + By + Cz + D = 0\)</p>
         </div>
         <h3>Quick Example</h3>
         <div class="example-block">
-            <p>Given a line’s parametric equations, substitute x,y,z into plane’s Cartesian equation. If you get one value for t → one intersection point. If t cancels and you get a true statement (0=0), the line lies on the plane.</p>
+            <p>Given a line’s parametric equations, substitute \(x, y, z\) into plane’s Cartesian equation. If you get one value for \(t\) \(\rightarrow\) one intersection point. If \(t\) cancels and you get a true statement (\(0=0\)), the line lies on the plane.</p>
         </div>
     </section>
 
-    <section id="sec9‑2">
-        <h2>9.2 Systems of Equations</h2>
-        <!-- Content reserved for later editing -->
+    <section id="sec9-2">
+        <h2>9.2 Systems of Linear Equations</h2>
+        <h3>Definition</h3>
+        <div class="def-block">
+            <p>A <strong>system of linear equations</strong> consists of two or more linear equations involving the same variables. In three-dimensional space (\(R^3\)), a linear system typically consists of three equations with three variables (\(x, y, z\)), each representing a plane.</p>
+        </div>
+        <h3>Core Concepts</h3>
+        <div class="concept-block">
+            <p>Possible solution sets for a 3-variable linear system:</p>
+            <ol style="margin-left:20px;">
+                <li><strong>Unique solution:</strong> The planes intersect at a single point \((x, y, z)\).</li>
+                <li><strong>Infinitely many solutions:</strong> The planes intersect along a common line or are coincident.</li>
+                <li><strong>No solution (Inconsistent):</strong> The system has contradictions (e.g., parallel planes or a triangular prism configuration with no common intersection).</li>
+            </ol>
+            <p><strong>Solving Strategy:</strong> Use Gaussian elimination (elementary row operations) on the augmented matrix \([A | B]\) to transform the system into row-echelon form.</p>
+        </div>
+        <h3>Important Formulas</h3>
+        <div class="formula-block">
+            <p>Augmented Matrix Form: \([A | B]\) where \(A\) is the coefficient matrix and \(B\) is the constant column vector.</p>
+            <p>Elementary Row Operations: 
+                <br>1. Interchange two rows (\(R_i \leftrightarrow R_j\)).
+                <br>2. Multiply a row by a non-zero scalar (\(kR_i \to R_i\)).
+                <br>3. Add a multiple of one row to another (\(R_i + kR_j \to R_i\)).
+            </p>
+        </div>
+        <h3>Quick Example</h3>
+        <div class="example-block">
+            <p>For a system like \(x+y+z=6\), \(2x-y+3z=14\), and \(x+2y-z=2\), applying row operations leads to upper triangular form, allowing back-substitution to find the unique solution \((1, 2, 3)\).</p>
+        </div>
     </section>
 
-    <section id="sec9‑3">
+    <section id="sec9-3">
         <h2>9.3 The Intersection of Two Planes</h2>
-        <!-- Content reserved for later editing -->
+        <h3>Definition</h3>
+        <div class="def-block">
+            <p>Two planes in \(R^3\) can either be parallel distinct, coincident, or intersecting along a straight line.</p>
+        </div>
+        <h3>Core Concepts</h3>
+        <div class="concept-block">
+            <p><strong>Cases:</strong></p>
+            <ol style="margin-left:20px;">
+                <li><strong>Parallel distinct:</strong> Normal vectors are scalar multiples (\(\vec{n}_1 = k\vec{n}_2\)), but constant terms do not match ratio; no intersection.</li>
+                <li><strong>Coincident:</strong> Normal vectors and constants are proportional; infinite solutions (the whole plane).</li>
+                <li><strong>Intersecting:</strong> Normal vectors are not scalar multiples; they intersect along a line. The direction vector of the line is given by \(\vec{d} = \vec{n}_1 \times \vec{n}_2\).</li>
+            </ol>
+        </div>
+        <h3>Important Formulas</h3>
+        <div class="formula-block">
+            <p>Line of intersection direction vector: \(\vec{d} = \vec{n}_1 \times \vec{n}_2\)</p>
+        </div>
+        <h3>Quick Example</h3>
+        <div class="example-block">
+            <p>Cross the normal vectors of two non-parallel planes to get the direction vector of their intersection line, then find a particular point by setting one variable to zero.</p>
+        </div>
     </section>
 
-    <section id="sec9‑4">
+    <section id="sec9-4">
         <h2>9.4 The Intersection of Three Planes</h2>
         <!-- Content reserved for later editing -->
     </section>
 
-    <section id="sec9‑5">
-        <h2>9.5 The Distance from a Point to a Line in R² and R³</h2>
+    <section id="sec9-5">
+        <h2>9.5 The Distance from a Point to a Line in \(R^2\) and \(R^3\)</h2>
         <!-- Content reserved for later editing -->
     </section>
 
-    <section id="sec9‑6">
+    <section id="sec9-6">
         <h2>9.6 The Distance from a Point to a Plane</h2>
         <!-- Content reserved for later editing -->
     </section>
 
     <section id="reference">
         <h2>Formula &amp; Definition Reference Page</h2>
-        <!-- Content reserved for later editing -->
+        <p>Comprehensive summary of vector equations, Cartesian equations, cross products, and distance formulas for quick reference during problem solving.</p>
     </section>
 
+    <!-- Preview Practice 模块：保留 9.1-9.3 练习题，9.4-9.6 留空 -->
     <section id="practice">
-        <h2>Preview Practice (Self‑Check for Preview)</h2>
-        <!-- Content reserved for later editing -->
+        <h2>Preview Practice (Self-Check for Preview)</h2>
+        <p>Test your understanding with these practice problems. Click the <strong>Answer</strong> button below each question to reveal or hide the solution.</p>
+
+        <!-- 9.1 Practice -->
+        <div class="practice-subsection">
+            <h3>9.1 Practice Questions</h3>
+            
+            <div class="practice-question">
+                <p><strong>Q1:</strong> Determine whether the lines \(\vec{r} = (1, 2, 3) + t(1, -1, 2)\) and \(\vec{r} = (2, 1, 5) + s(2, -2, 4)\) are parallel, intersecting, coincident, or skew.</p>
+                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                <div class="answer-content"><strong>Solution:</strong> Direction vectors are \(\vec{d}_1 = (1, -1, 2)\) and \(\vec{d}_2 = (2, -2, 4) = 2\vec{d}_1\), so they are parallel. Testing point \((2, 1, 5)\) in the first line yields a valid consistent parameter \(t=1\). Thus, the lines are <strong>coincident</strong>.</div>
+            </div>
+
+            <div class="practice-question">
+                <p><strong>Q2:</strong> Find the intersection point of the line \(x = 1+t, y = 2-t, z = 3+2t\) and the plane \(2x + y - z + 4 = 0\).</p>
+                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                <div class="answer-content"><strong>Solution:</strong> Substitute parametric equations into the plane: \(2(1+t) + (2-t) - (3+2t) + 4 = 0 \implies 5 - t = 0 \implies t = 5\). Substituting \(t=5\) gives the point <strong>\((6, -3, 13)\)</strong>.</div>
+            </div>
+
+            <div class="practice-question">
+                <p><strong>Q3:</strong> Explain why skew lines can only exist in three-dimensional space (\(R^3\) or higher) and not in two-dimensional space (\(R^2\)).</p>
+                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                <div class="answer-content"><strong>Solution:</strong> In \(R^2\), all lines share the same flat plane, meaning non-parallel lines must cross and parallel lines share the same plane. In \(R^3\), lines can exist at different elevations without intersecting and without being parallel (skew lines).</div>
+            </div>
+
+            <div class="practice-question">
+                <p><strong>Q4:</strong> Determine if the line \(\vec{r} = (0, 1, 2) + t(1, 1, 1)\) intersects the plane \(x - y + z = 5\).</p>
+                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                <div class="answer-content"><strong>Solution:</strong> Substitute \(x = t, y = 1+t, z = 2+t\) into the plane equation: \(t - (1+t) + (2+t) = 5 \implies 1 + t = 5 \implies t = 4\). The intersection point is <strong>\((4, 5, 6)\)</strong>.</div>
+            </div>
+
+            <div class="practice-question">
+                <p><strong>Q5:</strong> Given a line with direction vector \(\vec{d} = (2, 3, -1)\) and a plane with normal vector \(\vec{n} = (4, -1, 5)\), what is their geometric relationship?</p>
+                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                <div class="answer-content"><strong>Solution:</strong> Compute dot product \(\vec{d} \cdot \vec{n} = 2(4) + 3(-1) + (-1)(5) = 8 - 3 - 5 = 0\). Since \(\vec{d} \perp \vec{n}\), the line is **parallel to the plane** (or lies within it).</div>
+            </div>
+        </div>
+
+        <!-- 9.2 Practice -->
+        <div class="practice-subsection">
+            <h3>9.2 Practice Questions</h3>
+            
+            <div class="practice-question">
+                <p><strong>Q1:</strong> State the three possible types of solution sets for a linear system of three equations in three variables.</p>
+                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                <div class="answer-content"><strong>Solution:</strong> 1. Unique solution (single point); 2. Infinitely many solutions (line or plane); 3. No solution (inconsistent system).</div>
+            </div>
+
+            <div class="practice-question">
+                <p><strong>Q2:</strong> Solve the linear system: \(x + y + z = 6\), \(2x - y + 3z = 14\), \(x + 2y - z = 2\).</p>
+                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                <div class="answer-content"><strong>Solution:</strong> Using Gaussian elimination, the unique solution is <strong>\(x = 1, y = 2, z = 3\)</strong>.</div>
+            </div>
+
+            <div class="practice-question">
+                <p><strong>Q3:</strong> What does a resulting statement like \(0 = 5\) signify during the row reduction of a linear system?</p>
+                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                <div class="answer-content"><strong>Solution:</strong> It means the system is **inconsistent** and has <strong>no solution</strong>.</div>
+            </div>
+
+            <div class="practice-question">
+                <p><strong>Q4:</strong> Solve the dependent system: \(x + y = 3\) and \(2x + 2y = 6\).</p>
+                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                <div class="answer-content"><strong>Solution:</strong> The second equation is a multiple of the first. There are **infinitely many solutions**: \(x = t, y = 3 - t\) (\(t \in R\)).</div>
+            </div>
+
+            <div class="practice-question">
+                <p><strong>Q5:</strong> What are the three elementary row operations used in Gaussian elimination?</p>
+                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                <div class="answer-content"><strong>Solution:</strong> 1. Interchange two rows; 2. Multiply a row by a non-zero scalar; 3. Add a multiple of one row to another row.</div>
+            </div>
+        </div>
+
+        <!-- 9.3 Practice -->
+        <div class="practice-subsection">
+            <h3>9.3 Practice Questions</h3>
+            
+            <div class="practice-question">
+                <p><strong>Q1:</strong> What are the possible geometric relationships between two distinct planes in \(R^3\)?</p>
+                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                <div class="answer-content"><strong>Solution:</strong> They can either be **parallel distinct** (no intersection) or **intersecting along a straight line**.</div>
+            </div>
+
+            <div class="practice-question">
+                <p><strong>Q2:</strong> Determine the intersection of the planes \(x + y + z = 3\) and \(2x + 2y + 2z = 8\).</p>
+                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                <div class="answer-content"><strong>Solution:</strong> The second plane simplifies to \(x + y + z = 4\). Since constants differ while normal vectors match, they are **parallel distinct (no solution)**.</div>
+            </div>
+
+            <div class="practice-question">
+                <p><strong>Q3:</strong> How do you find the direction vector of the line of intersection of two intersecting planes?</p>
+                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                <div class="answer-content"><strong>Solution:</strong> By taking the **cross product** of their normal vectors: \(\vec{d} = \vec{n}_1 \times \vec{n}_2\).</div>
+            </div>
+
+            <div class="practice-question">
+                <p><strong>Q4:</strong> Find the direction vector for the line of intersection between \(x + y - z = 1\) and \(2x - y + z = 2\).</p>
+                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                <div class="answer-content"><strong>Solution:</strong> \(\vec{d} = (1, 1, -1) \times (2, -1, 1) = (0, -3, -3)\) or proportional to <strong>\((0, 1, 1)\)</strong>.</div>
+            </div>
+
+            <div class="practice-question">
+                <p><strong>Q5:</strong> If two planes have normal vectors that are scalar multiples (\(\vec{n}_1 = k\vec{n}_2\)), what can be said about their intersection?</p>
+                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                <div class="answer-content"><strong>Solution:</strong> They are either parallel distinct (no solution) or coincident (infinitely many solutions).</div>
+            </div>
+        </div>
+
+        <!-- 9.4-9.6 Practice placeholders -->
+        <div class="practice-subsection">
+            <h3>9.4 Practice Questions</h3>
+            <p style="color:#666; font-style:italic;">Content reserved for later editing.</p>
+        </div>
+        <div class="practice-subsection">
+            <h3>9.5 Practice Questions</h3>
+            <p style="color:#666; font-style:italic;">Content reserved for later editing.</p>
+        </div>
+        <div class="practice-subsection">
+            <h3>9.6 Practice Questions</h3>
+            <p style="color:#666; font-style:italic;">Content reserved for later editing.</p>
+        </div>
     </section>
 
-    <!-- 新增多人在线协同文本框模块 -->
+    <!-- 多人在线协同文本框模块 -->
     <section id="text">
         <h2>Text (Collaborative Editor)</h2>
         <div class="editor-container">
@@ -144,8 +317,22 @@
     </section>
 </main>
 <footer>
-CCT Assignment — Nelson Calculus &amp; Vectors 12 Chapter9 Preview Website
+CCT Assignment — Nelson Calculus &amp; Vectors 12 Chapter 9 Preview Website
 </footer>
+
+<!-- 答案切换脚本 -->
+<script>
+    function toggleAnswer(btn) {
+        const ans = btn.nextElementSibling;
+        if (ans.style.display === "none" || ans.style.display === "") {
+            ans.style.display = "block";
+            btn.textContent = "Hide Answer";
+        } else {
+            ans.style.display = "none";
+            btn.textContent = "Answer";
+        }
+    }
+</script>
 
 <!-- Firebase 协同逻辑 -->
 <script type="module">
