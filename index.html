@@ -66,11 +66,15 @@
         .videos-container{display:grid;grid-template-columns:repeat(auto-fit, minmax(520px, 1fr));gap:24px;}
         @media (max-width: 900px){.videos-container{grid-template-columns:1fr;}}
         .video-slot-card{background:#f8fafd;border:1px solid #d7dde6;border-radius:8px;padding:18px;}
-        .video-slot-card h3{margin-top:0;color:#2c4260;border-bottom:1px solid #dce3ee;padding-bottom:6px;}
+        .video-slot-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #dce3ee;padding-bottom:6px;margin-bottom:12px;}
+        .video-slot-header h3{margin:0;color:#2c4260;}
+        .clear-video-btn{background:#d9534f;color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;display:none;}
+        .clear-video-btn:hover{background:#b52b27;}
         .video-upload-box{border:2px dashed #9cb3d1;background:#f4f8fe;border-radius:8px;padding:18px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:14px;}
         .video-upload-box:hover, .video-upload-box.dragover{background:#e6f0fc;border-color:#4472b9;}
         .video-upload-label{display:inline-block;background:#4472b9;color:#fff;padding:6px 16px;border-radius:6px;font-weight:600;cursor:pointer;margin-bottom:6px;font-size:13.5px;}
         .video-upload-label:hover{background:#325c99;}
+        .video-sync-status{font-size:12.5px;font-weight:600;color:#509368;margin-bottom:10px;}
         .video-wrapper{position:relative;background:#0f172a;border-radius:8px;overflow:hidden;display:none;margin-bottom:12px;}
         .video-wrapper video{width:100%;max-height:360px;display:block;outline:none;}
         .seek-toast{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(15,23,42,0.85);color:#fff;padding:8px 16px;border-radius:20px;font-size:15px;font-weight:700;pointer-events:none;opacity:0;transition:opacity 0.2s;}
@@ -849,19 +853,23 @@
     <div id="videos" class="view-section">
         <section>
             <h2>Videos (Dual Lesson Players)</h2>
-            <p style="margin-bottom:16px;color:#4a5568;">Upload local video files into Slot 1 or Slot 2. Video files, playback status, and scrubbing are now synchronized in real time via Firebase.</p>
+            <p style="margin-bottom:16px;color:#4a5568;">Upload video files (recommended &lt; 7MB for Realtime Database sync) into Slot 1 or Slot 2. Everyone online will see the uploaded video and sync playback in real time.</p>
             
             <div class="videos-container">
                 <!-- Video Slot 1 -->
                 <div class="video-slot-card" data-slot="1" id="slot-1">
-                    <h3>Video Slot 1</h3>
+                    <div class="video-slot-header">
+                        <h3>Video Slot 1</h3>
+                        <button type="button" class="clear-video-btn">Remove Video</button>
+                    </div>
+                    <div class="video-sync-status">Sync Status: Ready</div>
                     <div class="video-upload-box drop-zone">
-                        <label class="video-upload-label">Choose Video 1</label>
-                        <input type="file" class="video-file-input" accept="video/*" style="display:none;">
+                        <label for="file-input-1" class="video-upload-label">Choose Video 1</label>
+                        <input id="file-input-1" type="file" class="video-file-input" accept="video/*" style="display:none;">
                         <p class="video-file-name" style="color:#364e70;font-size:13.5px;">Click to upload or drag &amp; drop video file here</p>
                     </div>
                     <div class="video-wrapper">
-                        <video class="lesson-video" controls></video>
+                        <video class="lesson-video" controls playsinline></video>
                         <div class="seek-toast">+10s</div>
                     </div>
                     <div class="video-controls-bar">
@@ -886,14 +894,18 @@
 
                 <!-- Video Slot 2 -->
                 <div class="video-slot-card" data-slot="2" id="slot-2">
-                    <h3>Video Slot 2</h3>
+                    <div class="video-slot-header">
+                        <h3>Video Slot 2</h3>
+                        <button type="button" class="clear-video-btn">Remove Video</button>
+                    </div>
+                    <div class="video-sync-status">Sync Status: Ready</div>
                     <div class="video-upload-box drop-zone">
-                        <label class="video-upload-label">Choose Video 2</label>
-                        <input type="file" class="video-file-input" accept="video/*" style="display:none;">
+                        <label for="file-input-2" class="video-upload-label">Choose Video 2</label>
+                        <input id="file-input-2" type="file" class="video-file-input" accept="video/*" style="display:none;">
                         <p class="video-file-name" style="color:#364e70;font-size:13.5px;">Click to upload or drag &amp; drop video file here</p>
                     </div>
                     <div class="video-wrapper">
-                        <video class="lesson-video" controls></video>
+                        <video class="lesson-video" controls playsinline></video>
                         <div class="seek-toast">+10s</div>
                     </div>
                     <div class="video-controls-bar">
@@ -978,7 +990,7 @@ CCT Assignment — Nelson Calculus &amp; Vectors 12 Chapter 9 Preview Website
 <!-- Firebase 实时协同逻辑（文本 + 视频双向同步） -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+    import { getDatabase, ref, set, remove, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAysNBYZcjoONa5Mhdw4LeO6GlfV_1Vg04",
@@ -1020,6 +1032,8 @@ CCT Assignment — Nelson Calculus &amp; Vectors 12 Chapter 9 Preview Website
         const fileInput = card.querySelector(".video-file-input");
         const dropZone = card.querySelector(".drop-zone");
         const fileNameText = card.querySelector(".video-file-name");
+        const syncStatusText = card.querySelector(".video-sync-status");
+        const clearBtn = card.querySelector(".clear-video-btn");
         const videoWrapper = card.querySelector(".video-wrapper");
         const video = card.querySelector(".lesson-video");
         const controlsBar = card.querySelector(".video-controls-bar");
@@ -1032,31 +1046,53 @@ CCT Assignment — Nelson Calculus &amp; Vectors 12 Chapter 9 Preview Website
         let isRemoteUpdate = false;
         let toastTimer = null;
 
-        // 渲染视频与状态
+        // 重置 UI 为空状态
+        function resetVideoUI() {
+            video.pause();
+            video.removeAttribute("src");
+            video.load();
+            fileNameText.textContent = "Click to upload or drag & drop video file here";
+            syncStatusText.textContent = "Sync Status: Connected (No video uploaded yet)";
+            syncStatusText.style.color = "#509368";
+            videoWrapper.style.display = "none";
+            controlsBar.style.display = "none";
+            clearBtn.style.display = "none";
+        }
+
+        // 渲染云端视频与状态
         function applyVideoData(vData) {
-            if (!vData) return;
+            if (!vData || !vData.src) {
+                resetVideoUI();
+                return;
+            }
             isRemoteUpdate = true;
 
-            // 1. 更新视频源（Base64）
-            if (vData.src && video.src !== vData.src) {
+            // 1. 更新视频源
+            if (video.getAttribute("src") !== vData.src) {
                 video.src = vData.src;
-                fileNameText.textContent = "Loaded: " + (vData.name || "Remote Video");
+                fileNameText.textContent = "Synced Video: " + (vData.name || "Shared Video");
                 videoWrapper.style.display = "block";
                 controlsBar.style.display = "flex";
+                clearBtn.style.display = "inline-block";
+                syncStatusText.textContent = "Sync Status: Live Synced ✓";
+                syncStatusText.style.color = "#509368";
             }
 
-            // 2. 更新播放/暂停状态
+            // 2. 更新播放时间进度（差距超过 0.8 秒则同步）
+            if (vData.currentTime !== undefined && Math.abs(video.currentTime - vData.currentTime) > 0.8) {
+                video.currentTime = vData.currentTime;
+            }
+
+            // 3. 更新播放/暂停状态（处理浏览器自动播放限制）
             if (vData.isPlaying !== undefined) {
                 if (vData.isPlaying && video.paused) {
-                    video.play().catch(() => {});
+                    video.play().catch(() => {
+                        syncStatusText.textContent = "Sync Status: Click video to allow playback (browser policy)";
+                        syncStatusText.style.color = "#d6942c";
+                    });
                 } else if (!vData.isPlaying && !video.paused) {
                     video.pause();
                 }
-            }
-
-            // 3. 更新播放时间进度（如果本地与云端差距超过 0.8 秒则同步）
-            if (vData.currentTime !== undefined && Math.abs(video.currentTime - vData.currentTime) > 0.8) {
-                video.currentTime = vData.currentTime;
             }
 
             // 4. 更新倍速
@@ -1071,15 +1107,23 @@ CCT Assignment — Nelson Calculus &amp; Vectors 12 Chapter 9 Preview Website
                 });
             }
 
-            setTimeout(() => { isRemoteUpdate = false; }, 100);
+            setTimeout(() => { isRemoteUpdate = false; }, 150);
         }
 
         // 监听 Firebase 云端视频数据变化
         onValue(videoDataRef, (snapshot) => {
             const val = snapshot.val();
-            if (val) {
-                applyVideoData(val);
-            }
+            applyVideoData(val);
+        }, (error) => {
+            syncStatusText.textContent = "Sync Error: " + error.message;
+            syncStatusText.style.color = "#d9534f";
+        });
+
+        // 清空云端视频
+        clearBtn.addEventListener("click", () => {
+            remove(videoDataRef).catch(err => {
+                alert("Failed to remove video: " + err.message);
+            });
         });
 
         // 上传文件并转为 Base64 写入云端
@@ -1088,6 +1132,17 @@ CCT Assignment — Nelson Calculus &amp; Vectors 12 Chapter 9 Preview Website
                 alert("Please select a valid video file.");
                 return;
             }
+
+            // Realtime Database 单节点限制 10MB，Base64 约膨胀 33%，因此限制原文件在 7.2MB 以内
+            const maxSizeBytes = 7.2 * 1024 * 1024;
+            if (file.size > maxSizeBytes) {
+                alert(`File is too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Firebase Realtime Database only supports videos under ~7 MB. Please compress the video or upload a shorter clip.`);
+                return;
+            }
+
+            syncStatusText.textContent = "Sync Status: Uploading & syncing to all users...";
+            syncStatusText.style.color = "#4472b9";
+
             const reader = new FileReader();
             reader.onload = function (e) {
                 const base64Str = e.target.result;
@@ -1097,6 +1152,13 @@ CCT Assignment — Nelson Calculus &amp; Vectors 12 Chapter 9 Preview Website
                     isPlaying: false,
                     currentTime: 0,
                     playbackRate: video.playbackRate || 1
+                }).then(() => {
+                    syncStatusText.textContent = "Sync Status: Uploaded & Live Synced ✓";
+                    syncStatusText.style.color = "#509368";
+                }).catch((err) => {
+                    syncStatusText.textContent = "Upload Failed: " + err.message;
+                    syncStatusText.style.color = "#d9534f";
+                    alert("Firebase upload failed (file may exceed database limit): " + err.message);
                 });
             };
             reader.readAsDataURL(file);
@@ -1105,10 +1167,12 @@ CCT Assignment — Nelson Calculus &amp; Vectors 12 Chapter 9 Preview Website
         fileInput.addEventListener("change", (e) => {
             if (e.target.files && e.target.files[0]) {
                 handleVideoFile(e.target.files[0]);
+                e.target.value = ""; // 允许重复上传同一文件
             }
         });
 
         dropZone.addEventListener("click", (e) => {
+            // 避免点击 label 时重复触发两次文件框
             if (e.target !== fileInput && e.target.tagName !== "LABEL") {
                 fileInput.click();
             }
