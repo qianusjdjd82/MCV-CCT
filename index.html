@@ -845,15 +845,15 @@
         </section>
     </div>
 
-    <!-- VIDEOS VIEW (双视频槽位) -->
+    <!-- VIDEOS VIEW (双视频槽位 - 实时同步) -->
     <div id="videos" class="view-section">
         <section>
             <h2>Videos (Dual Lesson Players)</h2>
-            <p style="margin-bottom:16px;color:#4a5568;">Upload local video files (MP4, WebM, MOV) into Slot 1 or Slot 2. Use speed buttons, skip buttons, or keyboard arrow keys (\(\leftarrow / \rightarrow\)) to control playback.</p>
+            <p style="margin-bottom:16px;color:#4a5568;">Upload local video files into Slot 1 or Slot 2. Video files, playback status, and scrubbing are now synchronized in real time via Firebase.</p>
             
             <div class="videos-container">
                 <!-- Video Slot 1 -->
-                <div class="video-slot-card" data-slot="1">
+                <div class="video-slot-card" data-slot="1" id="slot-1">
                     <h3>Video Slot 1</h3>
                     <div class="video-upload-box drop-zone">
                         <label class="video-upload-label">Choose Video 1</label>
@@ -885,7 +885,7 @@
                 </div>
 
                 <!-- Video Slot 2 -->
-                <div class="video-slot-card" data-slot="2">
+                <div class="video-slot-card" data-slot="2" id="slot-2">
                     <h3>Video Slot 2</h3>
                     <div class="video-upload-box drop-zone">
                         <label class="video-upload-label">Choose Video 2</label>
@@ -956,7 +956,6 @@ CCT Assignment — Nelson Calculus &amp; Vectors 12 Chapter 9 Preview Website
             });
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            // 重新渲染 MathJax 公式（切换页面后确保公式正常显示）
             if (window.MathJax && window.MathJax.typeset) {
                 window.MathJax.typeset();
             }
@@ -974,150 +973,9 @@ CCT Assignment — Nelson Calculus &amp; Vectors 12 Chapter 9 Preview Website
             btn.textContent = "Answer";
         }
     }
-
-    // 3. 双视频槽位控制器与方向键快进/快退逻辑
-    (function () {
-        const videoCards = document.querySelectorAll(".video-slot-card");
-        let activeVideo = null; // 当前聚焦或最后操作的视频
-
-        videoCards.forEach(card => {
-            const fileInput = card.querySelector(".video-file-input");
-            const dropZone = card.querySelector(".drop-zone");
-            const fileNameText = card.querySelector(".video-file-name");
-            const videoWrapper = card.querySelector(".video-wrapper");
-            const video = card.querySelector(".lesson-video");
-            const controlsBar = card.querySelector(".video-controls-bar");
-            const seekToast = card.querySelector(".seek-toast");
-            const speedButtons = card.querySelectorAll(".speed-btn");
-            const rewindBtn = card.querySelector(".rewind-btn");
-            const forwardBtn = card.querySelector(".forward-btn");
-
-            let currentObjectUrl = null;
-            let toastTimer = null;
-
-            function loadVideoFile(file) {
-                if (!file || !file.type.startsWith("video/")) {
-                    alert("Please select a valid video file.");
-                    return;
-                }
-                if (currentObjectUrl) {
-                    URL.revokeObjectURL(currentObjectUrl);
-                }
-                currentObjectUrl = URL.createObjectURL(file);
-                video.src = currentObjectUrl;
-                fileNameText.textContent = "Loaded: " + file.name;
-                videoWrapper.style.display = "block";
-                controlsBar.style.display = "flex";
-
-                const activeBtn = card.querySelector(".speed-btn.active");
-                if (activeBtn) {
-                    video.playbackRate = parseFloat(activeBtn.dataset.speed);
-                }
-            }
-
-            function showSeekToast(label) {
-                seekToast.textContent = label;
-                seekToast.classList.add("show");
-                clearTimeout(toastTimer);
-                toastTimer = setTimeout(() => {
-                    seekToast.classList.remove("show");
-                }, 650);
-            }
-
-            function skipVideo(seconds) {
-                if (!video.src) return;
-                const duration = isFinite(video.duration) ? video.duration : Infinity;
-                video.currentTime = Math.min(Math.max(0, video.currentTime + seconds), duration);
-                showSeekToast(seconds > 0 ? `+${seconds}s »` : `« ${seconds}s`);
-            }
-
-            fileInput.addEventListener("change", (e) => {
-                if (e.target.files && e.target.files[0]) {
-                    loadVideoFile(e.target.files[0]);
-                }
-            });
-
-            dropZone.addEventListener("click", (e) => {
-                if (e.target !== fileInput && e.target.tagName !== "LABEL") {
-                    fileInput.click();
-                }
-            });
-
-            dropZone.addEventListener("dragover", (e) => {
-                e.preventDefault();
-                dropZone.classList.add("dragover");
-            });
-
-            dropZone.addEventListener("dragleave", () => {
-                dropZone.classList.remove("dragover");
-            });
-
-            dropZone.addEventListener("drop", (e) => {
-                e.preventDefault();
-                dropZone.classList.remove("dragover");
-                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                    loadVideoFile(e.dataTransfer.files[0]);
-                }
-            });
-
-            speedButtons.forEach((btn) => {
-                btn.addEventListener("click", () => {
-                    speedButtons.forEach((b) => b.classList.remove("active"));
-                    btn.classList.add("active");
-                    video.playbackRate = parseFloat(btn.dataset.speed);
-                });
-            });
-
-            rewindBtn.addEventListener("click", () => {
-                activeVideo = video;
-                skipVideo(-10);
-            });
-            forwardBtn.addEventListener("click", () => {
-                activeVideo = video;
-                skipVideo(10);
-            });
-
-            video.addEventListener("play", () => {
-                activeVideo = video;
-            });
-            video.addEventListener("click", () => {
-                activeVideo = video;
-            });
-        });
-
-        // 监听全局左右方向键快进/快退 10 秒
-        document.addEventListener("keydown", (e) => {
-            const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : "";
-            if (tag === "textarea" || tag === "input") return;
-
-            if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
-                if (!activeVideo || !activeVideo.src) {
-                    // 如果没有选中的视频，默认尝试寻找第一个有加载视频的播放器
-                    const firstVid = document.querySelector(".lesson-video");
-                    if (firstVid && firstVid.src) activeVideo = firstVid;
-                }
-                if (activeVideo && activeVideo.src) {
-                    e.preventDefault();
-                    const seconds = e.key === "ArrowRight" ? 10 : -10;
-                    const duration = isFinite(activeVideo.duration) ? activeVideo.duration : Infinity;
-                    activeVideo.currentTime = Math.min(Math.max(0, activeVideo.currentTime + seconds), duration);
-                    
-                    const card = activeVideo.closest(".video-slot-card");
-                    if (card) {
-                        const seekToast = card.querySelector(".seek-toast");
-                        if (seekToast) {
-                            seekToast.textContent = seconds > 0 ? `+${seconds}s »` : `« ${seconds}s`;
-                            seekToast.classList.add("show");
-                            setTimeout(() => seekToast.classList.remove("show"), 650);
-                        }
-                    }
-                }
-            }
-        });
-    })();
 </script>
 
-<!-- Firebase 协同逻辑 -->
+<!-- Firebase 实时协同逻辑（文本 + 视频双向同步） -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
@@ -1135,14 +993,15 @@ CCT Assignment — Nelson Calculus &amp; Vectors 12 Chapter 9 Preview Website
 
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
-    const editorRef = ref(database, "editor");
 
+    // ---- 1. 文本框实时同步 ----
+    const editorRef = ref(database, "editor");
     const editor = document.getElementById("editor");
     const status = document.getElementById("status");
 
     onValue(editorRef, (snapshot) => {
         const data = snapshot.val();
-        if (data !== null) {
+        if (data !== null && editor.value !== data) {
             editor.value = data;
         }
         status.textContent = "Firebase Connected ✓";
@@ -1150,6 +1009,216 @@ CCT Assignment — Nelson Calculus &amp; Vectors 12 Chapter 9 Preview Website
 
     editor.addEventListener("input", () => {
         set(editorRef, editor.value);
+    });
+
+    // ---- 2. 视频实时同步 (Slot 1 & Slot 2) ----
+    const videoCards = document.querySelectorAll(".video-slot-card");
+    let activeVideo = null;
+
+    videoCards.forEach(card => {
+        const slotId = card.getAttribute("data-slot");
+        const fileInput = card.querySelector(".video-file-input");
+        const dropZone = card.querySelector(".drop-zone");
+        const fileNameText = card.querySelector(".video-file-name");
+        const videoWrapper = card.querySelector(".video-wrapper");
+        const video = card.querySelector(".lesson-video");
+        const controlsBar = card.querySelector(".video-controls-bar");
+        const seekToast = card.querySelector(".seek-toast");
+        const speedButtons = card.querySelectorAll(".speed-btn");
+        const rewindBtn = card.querySelector(".rewind-btn");
+        const forwardBtn = card.querySelector(".forward-btn");
+
+        const videoDataRef = ref(database, `videos/slot${slotId}`);
+        let isRemoteUpdate = false;
+        let toastTimer = null;
+
+        // 渲染视频与状态
+        function applyVideoData(vData) {
+            if (!vData) return;
+            isRemoteUpdate = true;
+
+            // 1. 更新视频源（Base64）
+            if (vData.src && video.src !== vData.src) {
+                video.src = vData.src;
+                fileNameText.textContent = "Loaded: " + (vData.name || "Remote Video");
+                videoWrapper.style.display = "block";
+                controlsBar.style.display = "flex";
+            }
+
+            // 2. 更新播放/暂停状态
+            if (vData.isPlaying !== undefined) {
+                if (vData.isPlaying && video.paused) {
+                    video.play().catch(() => {});
+                } else if (!vData.isPlaying && !video.paused) {
+                    video.pause();
+                }
+            }
+
+            // 3. 更新播放时间进度（如果本地与云端差距超过 0.8 秒则同步）
+            if (vData.currentTime !== undefined && Math.abs(video.currentTime - vData.currentTime) > 0.8) {
+                video.currentTime = vData.currentTime;
+            }
+
+            // 4. 更新倍速
+            if (vData.playbackRate !== undefined && video.playbackRate !== vData.playbackRate) {
+                video.playbackRate = vData.playbackRate;
+                speedButtons.forEach(b => {
+                    if (parseFloat(b.dataset.speed) === vData.playbackRate) {
+                        b.classList.add("active");
+                    } else {
+                        b.classList.remove("active");
+                    }
+                });
+            }
+
+            setTimeout(() => { isRemoteUpdate = false; }, 100);
+        }
+
+        // 监听 Firebase 云端视频数据变化
+        onValue(videoDataRef, (snapshot) => {
+            const val = snapshot.val();
+            if (val) {
+                applyVideoData(val);
+            }
+        });
+
+        // 上传文件并转为 Base64 写入云端
+        function handleVideoFile(file) {
+            if (!file || !file.type.startsWith("video/")) {
+                alert("Please select a valid video file.");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const base64Str = e.target.result;
+                set(videoDataRef, {
+                    name: file.name,
+                    src: base64Str,
+                    isPlaying: false,
+                    currentTime: 0,
+                    playbackRate: video.playbackRate || 1
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        fileInput.addEventListener("change", (e) => {
+            if (e.target.files && e.target.files[0]) {
+                handleVideoFile(e.target.files[0]);
+            }
+        });
+
+        dropZone.addEventListener("click", (e) => {
+            if (e.target !== fileInput && e.target.tagName !== "LABEL") {
+                fileInput.click();
+            }
+        });
+
+        dropZone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropZone.classList.add("dragover");
+        });
+        dropZone.addEventListener("dragleave", () => {
+            dropZone.classList.remove("dragover");
+        });
+        dropZone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            dropZone.classList.remove("dragover");
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                handleVideoFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        // 触发播放状态同步到云端
+        video.addEventListener("play", () => {
+            if (isRemoteUpdate) return;
+            set(ref(database, `videos/slot${slotId}/isPlaying`), true);
+            activeVideo = video;
+        });
+
+        video.addEventListener("pause", () => {
+            if (isRemoteUpdate) return;
+            set(ref(database, `videos/slot${slotId}/isPlaying`), false);
+        });
+
+        // 拖动进度条 / 快进快退时同步时间
+        video.addEventListener("seeked", () => {
+            if (isRemoteUpdate) return;
+            set(ref(database, `videos/slot${slotId}/currentTime`), video.currentTime);
+        });
+
+        video.addEventListener("click", () => {
+            activeVideo = video;
+        });
+
+        // 倍速按钮同步
+        speedButtons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                speedButtons.forEach((b) => b.classList.remove("active"));
+                btn.classList.add("active");
+                const rate = parseFloat(btn.dataset.speed);
+                video.playbackRate = rate;
+                set(ref(database, `videos/slot${slotId}/playbackRate`), rate);
+            });
+        });
+
+        function showSeekToast(label) {
+            seekToast.textContent = label;
+            seekToast.classList.add("show");
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                seekToast.classList.remove("show");
+            }, 650);
+        }
+
+        function skipVideo(seconds) {
+            if (!video.src) return;
+            const duration = isFinite(video.duration) ? video.duration : Infinity;
+            video.currentTime = Math.min(Math.max(0, video.currentTime + seconds), duration);
+            set(ref(database, `videos/slot${slotId}/currentTime`), video.currentTime);
+            showSeekToast(seconds > 0 ? `+${seconds}s »` : `« ${seconds}s`);
+        }
+
+        rewindBtn.addEventListener("click", () => {
+            activeVideo = video;
+            skipVideo(-10);
+        });
+        forwardBtn.addEventListener("click", () => {
+            activeVideo = video;
+            skipVideo(10);
+        });
+    });
+
+    // 监听全局左右方向键快进/快退 10 秒
+    document.addEventListener("keydown", (e) => {
+        const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : "";
+        if (tag === "textarea" || tag === "input") return;
+
+        if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+            if (!activeVideo || !activeVideo.src) {
+                const firstVid = document.querySelector(".lesson-video");
+                if (firstVid && firstVid.src) activeVideo = firstVid;
+            }
+            if (activeVideo && activeVideo.src) {
+                e.preventDefault();
+                const seconds = e.key === "ArrowRight" ? 10 : -10;
+                const duration = isFinite(activeVideo.duration) ? activeVideo.duration : Infinity;
+                activeVideo.currentTime = Math.min(Math.max(0, activeVideo.currentTime + seconds), duration);
+                
+                const card = activeVideo.closest(".video-slot-card");
+                const slotId = card.getAttribute("data-slot");
+                set(ref(database, `videos/slot${slotId}/currentTime`), activeVideo.currentTime);
+
+                if (card) {
+                    const seekToast = card.querySelector(".seek-toast");
+                    if (seekToast) {
+                        seekToast.textContent = seconds > 0 ? `+${seconds}s »` : `« ${seconds}s`;
+                        seekToast.classList.add("show");
+                        setTimeout(() => seekToast.classList.remove("show"), 650);
+                    }
+                }
+            }
+        }
     });
 </script>
 </body>
