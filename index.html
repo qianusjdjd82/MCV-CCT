@@ -8,34 +8,86 @@
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif;}
-        body{background-color:#f7f9fc;color:#222;line-height:1.65;max-width:1100px;margin:0 auto;padding-bottom:60px;}
-        header{background:#2c4260;color:#fff;padding:30px 24px;}
-        h1{font-size:26px;margin-bottom:8px;}
+        body{background-color:#f7f9fc;color:#222;line-height:1.65;max-width:1440px;margin:0 auto;padding-bottom:60px;}
+        header{background:#2c4260;color:#fff;padding:30px 32px;}
+        h1{font-size:28px;margin-bottom:8px;}
         .subtitle{opacity:0.92;font-size:16px;}
-        nav{background:#3c577a;padding:14px 20px;position:sticky;top:0;z-index:100;display:flex;flex-wrap:wrap;gap:6px;}
-        nav a{color:#ffffff;text-decoration:none;font-size:13.5px;padding:4px 8px;border-radius:4px;}
-        nav a:hover{background:rgba(255,255,255,0.2);text-decoration:underline;}
+        nav{background:#3c577a;padding:14px 24px;position:sticky;top:0;z-index:100;display:flex;flex-wrap:wrap;gap:8px;}
+        nav a{color:#ffffff;text-decoration:none;font-size:14px;padding:5px 10px;border-radius:4px;transition:background 0.2s;}
+        nav a:hover, nav a.active{background:rgba(255,255,255,0.25);text-decoration:underline;}
         main{padding:28px 24px;}
-        section{margin-bottom:48px;background:#ffffff;padding:24px;border-radius:10px;box-shadow:0 1px 6px #d7dde6;}
-        h2{color:#2c4260;border-bottom:solid 2px #cad4e2;padding-bottom:7px;margin-bottom:18px;}
-        h3{margin-top:20px;margin-bottom:10px;color:#364e70;}
+        
+        /* 视图切换：默认隐藏所有页面，通过 .view-section.active 显示当前页 */
+        .view-section{display:none;}
+        .view-section.active{display:block;}
+
+        section{background:#ffffff;padding:28px;border-radius:10px;box-shadow:0 1px 6px #d7dde6;}
+        h2{color:#2c4260;border-bottom:solid 2px #cad4e2;padding-bottom:8px;margin-bottom:20px;font-size:22px;}
+        h3{margin-top:18px;margin-bottom:10px;color:#364e70;}
+
+        /* 左右双栏图文排版 */
+        .section-split{display:flex;gap:28px;align-items:flex-start;}
+        .section-text{flex:1.45;min-width:0;}
+        .section-visual{flex:1;min-width:340px;background:#f8fafd;border:1px solid #d7dde6;border-radius:8px;padding:16px;}
+        .visual-title{font-size:14.5px;font-weight:700;color:#2c4260;margin-bottom:10px;text-align:center;border-bottom:1px solid #e1e8f2;padding-bottom:6px;}
+        .visual-caption{font-size:13.5px;color:#4a5568;margin-top:10px;line-height:1.5;background:#ffffff;padding:10px;border-radius:6px;border:1px solid #e6ecf5;}
+        .section-visual svg{width:100%;height:auto;display:block;border-radius:6px;background:#ffffff;}
+
+        @media (max-width: 980px){
+            .section-split{flex-direction:column;}
+            .section-visual{width:100%;min-width:0;}
+        }
+
         .def-block{background:#e8f1fc;padding:14px;border-left:6px solid #4472b9;border-radius:6px;margin:12px 0;}
         .concept-block{background:#f3f7fb;padding:14px;border-left:6px solid #509368;border-radius:6px;margin:12px 0;}
         .formula-block{background:#fff7e8;padding:14px;border-left:6px solid #d6942c;border-radius:6px;margin:12px 0;}
         .example-block{background:#f4ecf9;padding:14px;border-left:6px solid #9c68b8;border-radius:6px;margin:12px 0;}
         .summary-box{background:#eef4ff;padding:18px;border-radius:8px;margin-top:22px;}
+
+        /* Formula Reference Table */
+        .ref-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:14.5px;}
+        .ref-table th,.ref-table td{border:1px solid #d7dde6;padding:12px 14px;text-align:left;vertical-align:top;}
+        .ref-table th{background:#2c4260;color:#ffffff;font-weight:600;}
+        .ref-table tr:nth-child(even){background:#f8fafd;}
         
         /* 练习题与答案折叠样式 */
-        .practice-subsection{margin-bottom:30px;}
-        .practice-question{background:#fafbfc;border:1px solid #e1e4e8;padding:15px;border-radius:6px;margin-bottom:12px;}
+        .practice-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(560px, 1fr));gap:24px;margin-top:16px;}
+        @media (max-width: 680px){
+            .practice-grid{grid-template-columns:1fr;}
+        }
+        .practice-subsection{background:#fdfdfe;border:1px solid #e1e6ef;border-radius:8px;padding:18px;}
+        .practice-subsection h3{margin-top:0;margin-bottom:14px;padding-bottom:6px;border-bottom:1px solid #dce3ee;}
+        .practice-question{background:#fafbfc;border:1px solid #e1e4e8;padding:14px;border-radius:6px;margin-bottom:12px;}
         .answer-btn{background:#4472b9;color:white;border:none;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:13.5px;margin-top:10px;font-weight:600;transition:background 0.2s;}
         .answer-btn:hover{background:#325c99;}
         .answer-content{display:none;margin-top:10px;padding:12px;background:#eef4ff;border-left:4px solid #4472b9;border-radius:4px;font-size:14.5px;}
 
+        /* Videos 双视频槽位样式 */
+        .videos-container{display:grid;grid-template-columns:repeat(auto-fit, minmax(520px, 1fr));gap:24px;}
+        @media (max-width: 900px){.videos-container{grid-template-columns:1fr;}}
+        .video-slot-card{background:#f8fafd;border:1px solid #d7dde6;border-radius:8px;padding:18px;}
+        .video-slot-card h3{margin-top:0;color:#2c4260;border-bottom:1px solid #dce3ee;padding-bottom:6px;}
+        .video-upload-box{border:2px dashed #9cb3d1;background:#f4f8fe;border-radius:8px;padding:18px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:14px;}
+        .video-upload-box:hover, .video-upload-box.dragover{background:#e6f0fc;border-color:#4472b9;}
+        .video-upload-label{display:inline-block;background:#4472b9;color:#fff;padding:6px 16px;border-radius:6px;font-weight:600;cursor:pointer;margin-bottom:6px;font-size:13.5px;}
+        .video-upload-label:hover{background:#325c99;}
+        .video-wrapper{position:relative;background:#0f172a;border-radius:8px;overflow:hidden;display:none;margin-bottom:12px;}
+        .video-wrapper video{width:100%;max-height:360px;display:block;outline:none;}
+        .seek-toast{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(15,23,42,0.85);color:#fff;padding:8px 16px;border-radius:20px;font-size:15px;font-weight:700;pointer-events:none;opacity:0;transition:opacity 0.2s;}
+        .seek-toast.show{opacity:1;}
+        .video-controls-bar{display:none;flex-direction:column;gap:10px;background:#f3f7fb;border:1px solid #d7dde6;padding:10px 14px;border-radius:8px;}
+        .speed-group{display:flex;flex-wrap:wrap;align-items:center;gap:6px;}
+        .speed-btn{background:#ffffff;color:#2c4260;border:1px solid #b8c7dc;padding:4px 9px;border-radius:4px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+        .speed-btn:hover{background:#e8f1fc;border-color:#4472b9;}
+        .speed-btn.active{background:#4472b9;color:#ffffff;border-color:#4472b9;}
+        .skip-btn{background:#2c4260;color:#ffffff;border:none;padding:5px 10px;border-radius:4px;font-size:12.5px;font-weight:600;cursor:pointer;}
+        .skip-btn:hover{background:#1e3048;}
+        .video-hint{font-size:12px;color:#4a5568;}
+
         .editor-container{display:flex;flex-direction:column;gap:12px;margin-top:12px;}
-        .editor-textarea{width:100%;height:320px;font-size:16px;padding:12px;border:1px solid #cad4e2;border-radius:6px;resize:vertical;font-family:inherit;}
+        .editor-textarea{width:100%;height:380px;font-size:16px;padding:12px;border:1px solid #cad4e2;border-radius:6px;resize:vertical;font-family:inherit;}
         .editor-status{font-weight:600;color:#364e70;}
-        footer{text-align:center;color:#666;font-size:14px;}
+        footer{text-align:center;color:#666;font-size:14px;margin-top:30px;}
     </style>
 </head>
 <body>
@@ -43,285 +95,875 @@
     <h1>Chapter 9: Relationships between Points, Lines, and Planes</h1>
     <div class="subtitle">Nelson Calculus and Vectors 12 — Preview Website for CCT Assignment</div>
 </header>
-<nav>
-    <a href="#home">Home-Overview</a>
-    <a href="#sec9-1">9.1 Line & Plane / Two Lines</a>
-    <a href="#sec9-2">9.2 Systems of Equations</a>
-    <a href="#sec9-3">9.3 Two Planes</a>
-    <a href="#sec9-4">9.4 Three Planes</a>
-    <a href="#sec9-5">9.5 Point to Line</a>
-    <a href="#sec9-6">9.6 Point to Plane</a>
-    <a href="#reference">Formula Reference</a>
-    <a href="#practice">Preview Practice</a>
-    <a href="#text">Text</a>
+<nav id="mainNav">
+    <a href="#home" class="nav-link active" data-target="home">Home-Overview</a>
+    <a href="#sec9-1" class="nav-link" data-target="sec9-1">9.1 Line &amp; Plane / Two Lines</a>
+    <a href="#sec9-2" class="nav-link" data-target="sec9-2">9.2 Systems of Equations</a>
+    <a href="#sec9-3" class="nav-link" data-target="sec9-3">9.3 Two Planes</a>
+    <a href="#sec9-4" class="nav-link" data-target="sec9-4">9.4 Three Planes</a>
+    <a href="#sec9-5" class="nav-link" data-target="sec9-5">9.5 Point to Line</a>
+    <a href="#sec9-6" class="nav-link" data-target="sec9-6">9.6 Point to Plane</a>
+    <a href="#reference" class="nav-link" data-target="reference">Formula Reference</a>
+    <a href="#practice" class="nav-link" data-target="practice">Preview Practice/Homework</a>
+    <a href="#videos" class="nav-link" data-target="videos">Videos</a>
+    <a href="#text" class="nav-link" data-target="text">Text</a>
 </nav>
 <main>
-    <section id="home">
-        <h2>Chapter Overview</h2>
-        <p>This chapter builds on Chapter 8 (equations for lines and planes in 3-space). We analyse geometric relationships: intersection, parallel and coincident cases for lines and planes. We also solve linear systems and calculate perpendicular shortest distance between points, lines and planes.</p>
-        <h3>Learning Goals</h3>
-        <ul style="margin-left:22px;">
-            <li>Identify all possible intersection cases for lines and planes in \(R^3\)</li>
-            <li>Solve systems of linear equations and link algebraic results to 3D-geometry</li>
-            <li>Apply distance formulas for point-to-line and point-to-plane</li>
-        </ul>
-        <div class="summary-box">
-            <strong>Big Idea of Chapter 9:</strong> Connect 3-D space geometry with linear algebra. The number of solutions (0, one, infinitely many) of a linear system tells us how these lines and planes intersect. Finally we compute perpendicular shortest distances.
-        </div>
-    </section>
+    <!-- HOME VIEW -->
+    <div id="home" class="view-section active">
+        <section>
+            <h2>Chapter Overview</h2>
+            <div class="section-split">
+                <div class="section-text">
+                    <p>This chapter builds on Chapter 8 (equations for lines and planes in 3-space). We analyse geometric relationships: intersection, parallel, and coincident cases for lines and planes. We also solve linear systems and calculate perpendicular shortest distances between points, lines, and planes.</p>
+                    <h3>Learning Goals</h3>
+                    <ul style="margin-left:22px;">
+                        <li>Identify all possible intersection cases for lines and planes in \(\mathbb{R}^3\)</li>
+                        <li>Solve systems of linear equations and link algebraic results to 3D geometry</li>
+                        <li>Apply distance formulas for point-to-line and point-to-plane</li>
+                    </ul>
+                    <div class="summary-box">
+                        <strong>Big Idea of Chapter 9:</strong> Connect 3-D space geometry with linear algebra. The number of solutions (0, one, infinitely many) of a linear system tells us how these lines and planes intersect. Finally we compute perpendicular shortest distances.
+                    </div>
+                </div>
+                <div class="section-visual">
+                    <div class="visual-title">3D Coordinate Space (\(\mathbb{R}^3\)) Concept Map</div>
+                    <svg viewBox="0 0 420 260" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 1 L 10 5 L 0 9 z" fill="#2c4260"/>
+                            </marker>
+                            <marker id="arrowRed" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 1 L 10 5 L 0 9 z" fill="#d9534f"/>
+                            </marker>
+                        </defs>
+                        <line x1="120" y1="180" x2="120" y2="25" stroke="#2c4260" stroke-width="2" marker-end="url(#arrow)"/>
+                        <line x1="120" y1="180" x2="360" y2="180" stroke="#2c4260" stroke-width="2" marker-end="url(#arrow)"/>
+                        <line x1="120" y1="180" x2="45" y2="240" stroke="#2c4260" stroke-width="2" marker-end="url(#arrow)"/>
+                        <text x="128" y="34" font-size="13" font-weight="bold" fill="#2c4260">z</text>
+                        <text x="366" y="184" font-size="13" font-weight="bold" fill="#2c4260">y</text>
+                        <text x="32" y="246" font-size="13" font-weight="bold" fill="#2c4260">x</text>
+                        <polygon points="150,115 310,95 270,155 110,175" fill="#4472b9" fill-opacity="0.22" stroke="#4472b9" stroke-width="2"/>
+                        <text x="275" y="148" font-size="12" font-weight="bold" fill="#2c4260">Plane π</text>
+                        <line x1="210" y1="135" x2="210" y2="68" stroke="#d9534f" stroke-width="2.2" marker-end="url(#arrowRed)"/>
+                        <text x="218" y="76" font-size="12" font-weight="bold" fill="#d9534f">Normal n</text>
+                        <circle cx="285" cy="52" r="4.5" fill="#9c68b8"/>
+                        <text x="294" y="55" font-size="12" font-weight="bold" fill="#9c68b8">Point P(x₀,y₀,z₀)</text>
+                        <line x1="285" y1="52" x2="285" y2="122" stroke="#509368" stroke-width="2" stroke-dasharray="4,3"/>
+                        <circle cx="285" cy="122" r="3.5" fill="#509368"/>
+                        <text x="292" y="92" font-size="12" font-weight="bold" fill="#509368">Shortest d</text>
+                    </svg>
+                    <div class="visual-caption">
+                        <strong>Geometry Meets Algebra:</strong> Points, lines, and planes are positioned in \(\mathbb{R}^3\). Normal vectors (\(\vec{n}\)) and direction vectors (\(\vec{d}\)) govern intersections and shortest perpendicular distances (\(d\)).
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
 
-    <section id="sec9-1">
-        <h2>9.1 The Intersection of a Line with a Plane and the Intersection of Two Lines</h2>
-        <h3>Definition</h3>
-        <div class="def-block">
-            <ul style="margin-left:20px;">
-                <li><strong>Skew lines:</strong> Two lines in \(R^3\) that are not parallel and do not intersect. Skew lines only exist in 3-dimensional space.</li>
-                <li><strong>Intersecting lines:</strong> Two lines share exactly one common point.</li>
-                <li><strong>Coincident lines:</strong> Two lines lie exactly on top of each other; infinitely many shared points.</li>
-                <li><strong>Parallel lines:</strong> Direction vectors are scalar multiples of each other.</li>
-            </ul>
-        </div>
-        <h3>Core Concepts</h3>
-        <div class="concept-block">
-            <p>Possible cases for two lines in \(R^3\):
-                <br>1. Intersect at exactly one point; &nbsp;2. Coincident; &nbsp;3. Parallel distinct; &nbsp;4. Skew (only for \(R^3\)).
-            </p>
-            <p>Possible cases for a line and a plane:</p>
-            <ol style="margin-left:20px;">
-                <li>Intersect at one single point</li>
-                <li>Line is parallel to the plane with no intersection</li>
-                <li>The entire line lies inside the plane (infinitely many intersection points)</li>
-            </ol>
-            <p><strong>Solving strategy:</strong> Substitute the parametric equations of the line into the Cartesian plane equation, solve for parameter \(t\), judge cases from the number of valid \(t\)-solutions.</p>
-        </div>
-        <h3>Important Formulas</h3>
-        <div class="formula-block">
-            <p>Vector equation for line: \(\vec{r} = \vec{r}_0 + t\vec{d}\)</p>
-            <p>Parametric line: \(x = x_0 + td_x,\ y = y_0 + td_y,\ z = z_0 + td_z\)</p>
-            <p>Cartesian plane: \(Ax + By + Cz + D = 0\)</p>
-        </div>
-        <h3>Quick Example</h3>
-        <div class="example-block">
-            <p>Given a line’s parametric equations, substitute \(x, y, z\) into plane’s Cartesian equation. If you get one value for \(t\) \(\rightarrow\) one intersection point. If \(t\) cancels and you get a true statement (\(0=0\)), the line lies on the plane.</p>
-        </div>
-    </section>
+    <!-- 9.1 VIEW -->
+    <div id="sec9-1" class="view-section">
+        <section>
+            <h2>9.1 The Intersection of a Line with a Plane and the Intersection of Two Lines</h2>
+            <div class="section-split">
+                <div class="section-text">
+                    <h3>Definition</h3>
+                    <div class="def-block">
+                        <ul style="margin-left:20px;">
+                            <li><strong>Skew lines:</strong> Two lines in \(\mathbb{R}^3\) that are not parallel and do not intersect. Skew lines only exist in 3-dimensional space.</li>
+                            <li><strong>Intersecting lines:</strong> Two lines share exactly one common point.</li>
+                            <li><strong>Coincident lines:</strong> Two lines lie exactly on top of each other; infinitely many shared points.</li>
+                            <li><strong>Parallel lines:</strong> Direction vectors are scalar multiples of each other (\(\vec{d}_1 = k\vec{d}_2\)).</li>
+                        </ul>
+                    </div>
+                    <h3>Core Concepts</h3>
+                    <div class="concept-block">
+                        <p>Possible cases for two lines in \(\mathbb{R}^3\):
+                            <br>1. Intersect at exactly one point; &nbsp;2. Coincident; &nbsp;3. Parallel distinct; &nbsp;4. Skew (only for \(\mathbb{R}^3\)).
+                        </p>
+                        <p style="margin-top:8px;">Possible cases for a line and a plane:</p>
+                        <ol style="margin-left:20px;">
+                            <li>Intersect at one single point</li>
+                            <li>Line is parallel to the plane with no intersection</li>
+                            <li>The entire line lies inside the plane (infinitely many intersection points)</li>
+                        </ol>
+                        <p style="margin-top:8px;"><strong>Solving strategy:</strong> Substitute the parametric equations of the line into the Cartesian plane equation, solve for parameter \(t\), and judge cases from the number of valid \(t\)-solutions.</p>
+                    </div>
+                    <h3>Important Formulas</h3>
+                    <div class="formula-block">
+                        <p>Vector equation for line: \(\vec{r} = \vec{r}_0 + t\vec{d},\ t \in \mathbb{R}\)</p>
+                        <p>Parametric line: \(x = x_0 + td_x,\ y = y_0 + td_y,\ z = z_0 + td_z\)</p>
+                        <p>Cartesian plane: \(Ax + By + Cz + D = 0\)</p>
+                    </div>
+                    <h3>Quick Example</h3>
+                    <div class="example-block">
+                        <p>Given a line’s parametric equations, substitute \(x, y, z\) into the plane’s Cartesian equation. If you get one value for \(t\) \(\rightarrow\) one intersection point. If \(t\) cancels and you get a true statement (\(0=0\)), the line lies on the plane; if you get a false statement (\(0=k,\ k \neq 0\)), the line is parallel and distinct.</p>
+                    </div>
+                </div>
+                <div class="section-visual">
+                    <div class="visual-title">Line–Plane &amp; Skew Lines in \(\mathbb{R}^3\)</div>
+                    <svg viewBox="0 0 420 310" xmlns="http://www.w3.org/2000/svg">
+                        <text x="14" y="20" font-size="12.5" font-weight="bold" fill="#2c4260">A. Line &amp; Plane (3 Cases)</text>
+                        <polygon points="35,95 225,75 190,135 15,155" fill="#4472b9" fill-opacity="0.18" stroke="#4472b9" stroke-width="1.8"/>
+                        <line x1="95" y1="30" x2="95" y2="108" stroke="#d9534f" stroke-width="2.2"/>
+                        <line x1="95" y1="108" x2="95" y2="165" stroke="#d9534f" stroke-width="2" stroke-dasharray="4,3"/>
+                        <circle cx="95" cy="108" r="4.5" fill="#d9534f"/>
+                        <text x="103" y="46" font-size="11" fill="#d9534f" font-weight="bold">1 Point (Unique t)</text>
+                        <line x1="55" y1="132" x2="175" y2="112" stroke="#509368" stroke-width="2.4"/>
+                        <text x="115" y="132" font-size="11" fill="#509368" font-weight="bold">In Plane (0 = 0)</text>
+                        <line x1="250" y1="52" x2="395" y2="52" stroke="#d6942c" stroke-width="2.2"/>
+                        <polygon points="245,95 405,95 385,135 225,135" fill="#4472b9" fill-opacity="0.15" stroke="#4472b9" stroke-width="1.5"/>
+                        <text x="255" y="44" font-size="11" fill="#b87914" font-weight="bold">Parallel (No t, 0 = k)</text>
+                        <line x1="15" y1="178" x2="405" y2="178" stroke="#e1e8f2" stroke-width="1.5"/>
+                        <text x="14" y="198" font-size="12.5" font-weight="bold" fill="#2c4260">B. Skew Lines (Only in ℝ³)</text>
+                        <rect x="85" y="212" width="140" height="70" fill="none" stroke="#aab7c9" stroke-width="1.3"/>
+                        <rect x="125" y="232" width="140" height="70" fill="none" stroke="#aab7c9" stroke-width="1.3"/>
+                        <line x1="85" y1="212" x2="125" y2="232" stroke="#aab7c9" stroke-width="1.3"/>
+                        <line x1="225" y1="212" x2="265" y2="232" stroke="#aab7c9" stroke-width="1.3"/>
+                        <line x1="85" y1="282" x2="125" y2="302" stroke="#aab7c9" stroke-width="1.3"/>
+                        <line x1="225" y1="282" x2="265" y2="302" stroke="#aab7c9" stroke-width="1.3"/>
+                        <line x1="105" y1="232" x2="285" y2="232" stroke="#9c68b8" stroke-width="2.8"/>
+                        <text x="272" y="226" font-size="11.5" font-weight="bold" fill="#9c68b8">L₁ (Top Front)</text>
+                        <line x1="85" y1="202" x2="85" y2="296" stroke="#d9534f" stroke-width="2.8"/>
+                        <text x="14" y="255" font-size="11.5" font-weight="bold" fill="#d9534f">L₂ (Back Left)</text>
+                    </svg>
+                    <div class="visual-caption">
+                        <strong>Visual Check:</strong> Skew lines \(L_1\) and \(L_2\) travel in non-parallel directions at different depths in \(\mathbb{R}^3\), so they never meet.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
 
-    <section id="sec9-2">
-        <h2>9.2 Systems of Linear Equations</h2>
-        <h3>Definition</h3>
-        <div class="def-block">
-            <p>A <strong>system of linear equations</strong> consists of two or more linear equations involving the same variables. In three-dimensional space (\(R^3\)), a linear system typically consists of three equations with three variables (\(x, y, z\)), each representing a plane.</p>
-        </div>
-        <h3>Core Concepts</h3>
-        <div class="concept-block">
-            <p>Possible solution sets for a 3-variable linear system:</p>
-            <ol style="margin-left:20px;">
-                <li><strong>Unique solution:</strong> The planes intersect at a single point \((x, y, z)\).</li>
-                <li><strong>Infinitely many solutions:</strong> The planes intersect along a common line or are coincident.</li>
-                <li><strong>No solution (Inconsistent):</strong> The system has contradictions (e.g., parallel planes or a triangular prism configuration with no common intersection).</li>
-            </ol>
-            <p><strong>Solving Strategy:</strong> Use Gaussian elimination (elementary row operations) on the augmented matrix \([A | B]\) to transform the system into row-echelon form.</p>
-        </div>
-        <h3>Important Formulas</h3>
-        <div class="formula-block">
-            <p>Augmented Matrix Form: \([A | B]\) where \(A\) is the coefficient matrix and \(B\) is the constant column vector.</p>
-            <p>Elementary Row Operations: 
-                <br>1. Interchange two rows (\(R_i \leftrightarrow R_j\)).
-                <br>2. Multiply a row by a non-zero scalar (\(kR_i \to R_i\)).
-                <br>3. Add a multiple of one row to another (\(R_i + kR_j \to R_i\)).
-            </p>
-        </div>
-        <h3>Quick Example</h3>
-        <div class="example-block">
-            <p>For a system like \(x+y+z=6\), \(2x-y+3z=14\), and \(x+2y-z=2\), applying row operations leads to upper triangular form, allowing back-substitution to find the unique solution \((1, 2, 3)\).</p>
-        </div>
-    </section>
+    <!-- 9.2 VIEW -->
+    <div id="sec9-2" class="view-section">
+        <section>
+            <h2>9.2 Systems of Linear Equations</h2>
+            <div class="section-split">
+                <div class="section-text">
+                    <h3>Definition</h3>
+                    <div class="def-block">
+                        <p>A <strong>system of linear equations</strong> consists of two or more linear equations involving the same variables. In three-dimensional space (\(\mathbb{R}^3\)), a linear system typically consists of three equations with three variables (\(x, y, z\)), each representing a plane.</p>
+                    </div>
+                    <h3>Core Concepts</h3>
+                    <div class="concept-block">
+                        <p>Possible solution sets for a 3-variable linear system:</p>
+                        <ol style="margin-left:20px;">
+                            <li><strong>Unique solution:</strong> The planes intersect at a single point \((x, y, z)\).</li>
+                            <li><strong>Infinitely many solutions:</strong> The planes intersect along a common line or are coincident.</li>
+                            <li><strong>No solution (Inconsistent):</strong> The system has contradictions (e.g., parallel planes or a triangular prism configuration with no common intersection).</li>
+                        </ol>
+                        <p style="margin-top:8px;"><strong>Solving Strategy:</strong> Use Gaussian elimination (elementary row operations) on the augmented matrix \([A | B]\) to transform the system into row-echelon form.</p>
+                    </div>
+                    <h3>Important Formulas</h3>
+                    <div class="formula-block">
+                        <p>Augmented Matrix Form: \([A | B]\) where \(A\) is the coefficient matrix and \(B\) is the constant column vector.</p>
+                        <p>Elementary Row Operations: 
+                            <br>1. Interchange two rows (\(R_i \leftrightarrow R_j\)).
+                            <br>2. Multiply a row by a non-zero scalar (\(kR_i \to R_i,\ k \neq 0\)).
+                            <br>3. Add a multiple of one row to another (\(R_i + kR_j \to R_i\)).
+                        </p>
+                    </div>
+                    <h3>Quick Example</h3>
+                    <div class="example-block">
+                        <p>For a system like \(x+y+z=6\), \(2x-y+3z=14\), and \(x+2y-z=2\), applying row operations leads to upper triangular form, allowing back-substitution to find the unique solution \((1, 2, 3)\).</p>
+                    </div>
+                </div>
+                <div class="section-visual">
+                    <div class="visual-title">Gaussian Elimination &amp; Row-Echelon Outcomes</div>
+                    <svg viewBox="0 0 420 275" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="18" y="14" width="384" height="72" rx="6" fill="#f3f7fb" stroke="#cad4e2"/>
+                        <text x="30" y="36" font-size="12.5" font-weight="bold" fill="#2c4260">Row-Echelon Form [ A | B ]</text>
+                        <text x="32" y="58" font-size="13" font-family="monospace" fill="#222">[ 1  a  b | d₁ ]   →  Unique Point (x, y, z)</text>
+                        <text x="32" y="76" font-size="13" font-family="monospace" fill="#222">[ 0  1  c | d₂ ]      when bottom row is [ 0 0 1 | d₃ ]</text>
+                        <rect x="18" y="102" width="120" height="155" rx="6" fill="#eef4ff" stroke="#4472b9" stroke-width="1.5"/>
+                        <text x="78" y="122" font-size="12" font-weight="bold" text-anchor="middle" fill="#2c4260">1 Solution</text>
+                        <circle cx="78" cy="175" r="5" fill="#d9534f"/>
+                        <line x1="42" y1="150" x2="114" y2="200" stroke="#4472b9" stroke-width="2"/>
+                        <line x1="42" y1="200" x2="114" y2="150" stroke="#509368" stroke-width="2"/>
+                        <text x="78" y="232" font-size="11" text-anchor="middle" fill="#333">Last row:</text>
+                        <text x="78" y="247" font-size="11" font-family="monospace" text-anchor="middle" fill="#2c4260">[0 0 1 | k]</text>
+                        <rect x="150" y="102" width="120" height="155" rx="6" fill="#f3f7fb" stroke="#509368" stroke-width="1.5"/>
+                        <text x="210" y="122" font-size="12" font-weight="bold" text-anchor="middle" fill="#326b47">∞ Solutions</text>
+                        <line x1="172" y1="195" x2="248" y2="155" stroke="#509368" stroke-width="3"/>
+                        <text x="210" y="216" font-size="11" text-anchor="middle" fill="#333">Parameter t</text>
+                        <text x="210" y="232" font-size="11" text-anchor="middle" fill="#333">Last row:</text>
+                        <text x="210" y="247" font-size="11" font-family="monospace" text-anchor="middle" fill="#326b47">[0 0 0 | 0]</text>
+                        <rect x="282" y="102" width="120" height="155" rx="6" fill="#fff7e8" stroke="#d6942c" stroke-width="1.5"/>
+                        <text x="342" y="122" font-size="12" font-weight="bold" text-anchor="middle" fill="#9e6611">0 Solutions</text>
+                        <line x1="304" y1="162" x2="380" y2="162" stroke="#d6942c" stroke-width="2.2"/>
+                        <line x1="304" y1="186" x2="380" y2="186" stroke="#d9534f" stroke-width="2.2"/>
+                        <text x="342" y="216" font-size="11" text-anchor="middle" fill="#333">Inconsistent</text>
+                        <text x="342" y="232" font-size="11" text-anchor="middle" fill="#333">Last row:</text>
+                        <text x="342" y="247" font-size="11" font-family="monospace" text-anchor="middle" fill="#d9534f">[0 0 0 | k≠0]</text>
+                    </svg>
+                    <div class="visual-caption">
+                        <strong>Reading the Matrix:</strong> The bottom row after Gaussian elimination immediately reveals whether the geometry meets at a point, a line/plane (\(0=0\)), or nowhere (\(0=k\)).
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
 
-    <section id="sec9-3">
-        <h2>9.3 The Intersection of Two Planes</h2>
-        <h3>Definition</h3>
-        <div class="def-block">
-            <p>Two planes in \(R^3\) can either be parallel distinct, coincident, or intersecting along a straight line.</p>
-        </div>
-        <h3>Core Concepts</h3>
-        <div class="concept-block">
-            <p><strong>Cases:</strong></p>
-            <ol style="margin-left:20px;">
-                <li><strong>Parallel distinct:</strong> Normal vectors are scalar multiples (\(\vec{n}_1 = k\vec{n}_2\)), but constant terms do not match ratio; no intersection.</li>
-                <li><strong>Coincident:</strong> Normal vectors and constants are proportional; infinite solutions (the whole plane).</li>
-                <li><strong>Intersecting:</strong> Normal vectors are not scalar multiples; they intersect along a line. The direction vector of the line is given by \(\vec{d} = \vec{n}_1 \times \vec{n}_2\).</li>
-            </ol>
-        </div>
-        <h3>Important Formulas</h3>
-        <div class="formula-block">
-            <p>Line of intersection direction vector: \(\vec{d} = \vec{n}_1 \times \vec{n}_2\)</p>
-        </div>
-        <h3>Quick Example</h3>
-        <div class="example-block">
-            <p>Cross the normal vectors of two non-parallel planes to get the direction vector of their intersection line, then find a particular point by setting one variable to zero.</p>
-        </div>
-    </section>
+    <!-- 9.3 VIEW -->
+    <div id="sec9-3" class="view-section">
+        <section>
+            <h2>9.3 The Intersection of Two Planes</h2>
+            <div class="section-split">
+                <div class="section-text">
+                    <h3>Definition</h3>
+                    <div class="def-block">
+                        <p>Two planes in \(\mathbb{R}^3\) can either be parallel distinct, coincident, or intersecting along a straight line.</p>
+                    </div>
+                    <h3>Core Concepts</h3>
+                    <div class="concept-block">
+                        <p><strong>Cases:</strong></p>
+                        <ol style="margin-left:20px;">
+                            <li><strong>Parallel distinct:</strong> Normal vectors are scalar multiples (\(\vec{n}_1 = k\vec{n}_2\)), but constant terms do not match ratio (\(D_1 \neq kD_2\)); no intersection.</li>
+                            <li><strong>Coincident:</strong> Normal vectors and constants are proportional (\(A_1x+B_1y+C_1z+D_1 = k(A_2x+B_2y+C_2z+D_2)\)); infinite solutions (the whole plane).</li>
+                            <li><strong>Intersecting:</strong> Normal vectors are not scalar multiples; they intersect along a line. The direction vector of the line is given by \(\vec{d} = \vec{n}_1 \times \vec{n}_2\).</li>
+                        </ol>
+                    </div>
+                    <h3>Important Formulas</h3>
+                    <div class="formula-block">
+                        <p>Line of intersection direction vector: \(\vec{d} = \vec{n}_1 \times \vec{n}_2\)</p>
+                    </div>
+                    <h3>Quick Example</h3>
+                    <div class="example-block">
+                        <p>Cross the normal vectors of two non-parallel planes to get the direction vector of their intersection line, then find a particular point by setting one variable (e.g., \(z=0\)) and solving the remaining 2-variable system.</p>
+                    </div>
+                </div>
+                <div class="section-visual">
+                    <div class="visual-title">Two Planes &amp; Cross Product Direction \(\vec{d} = \vec{n}_1 \times \vec{n}_2\)</div>
+                    <svg viewBox="0 0 420 270" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                                <path d="M 0 1 L 10 5 L 0 9 z" fill="#4472b9"/>
+                            </marker>
+                            <marker id="arrGreen" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                                <path d="M 0 1 L 10 5 L 0 9 z" fill="#509368"/>
+                            </marker>
+                        </defs>
+                        <polygon points="75,65 245,40 245,155 75,180" fill="#4472b9" fill-opacity="0.2" stroke="#4472b9" stroke-width="1.8"/>
+                        <text x="85" y="84" font-size="12" font-weight="bold" fill="#2c4260">Plane π₁</text>
+                        <polygon points="45,135 275,105 345,155 115,185" fill="#509368" fill-opacity="0.2" stroke="#509368" stroke-width="1.8"/>
+                        <text x="275" y="152" font-size="12" font-weight="bold" fill="#326b47">Plane π₂</text>
+                        <line x1="65" y1="158" x2="275" y2="128" stroke="#d9534f" stroke-width="3"/>
+                        <text x="155" y="168" font-size="12" font-weight="bold" fill="#d9534f">Line L: d = n₁ × n₂</text>
+                        <line x1="160" y1="90" x2="125" y2="42" stroke="#4472b9" stroke-width="2.2" marker-end="url(#arrBlue)"/>
+                        <text x="108" y="36" font-size="12" font-weight="bold" fill="#4472b9">n₁</text>
+                        <line x1="225" y1="138" x2="225" y2="75" stroke="#509368" stroke-width="2.2" marker-end="url(#arrGreen)"/>
+                        <text x="232" y="80" font-size="12" font-weight="bold" fill="#509368">n₂</text>
+                        <rect x="20" y="200" width="380" height="58" rx="6" fill="#f8fafd" stroke="#d7dde6"/>
+                        <line x1="40" y1="222" x2="155" y2="215" stroke="#4472b9" stroke-width="2.4"/>
+                        <line x1="40" y1="242" x2="155" y2="235" stroke="#4472b9" stroke-width="2.4"/>
+                        <text x="172" y="226" font-size="12" font-weight="bold" fill="#2c4260">Parallel Distinct:</text>
+                        <text x="172" y="244" font-size="11.5" fill="#4a5568">n₁ = kn₂, but D₁ ≠ kD₂ (No intersection)</text>
+                    </svg>
+                    <div class="visual-caption">
+                        <strong>Why Cross Product Works:</strong> The intersection line lies inside both planes simultaneously, so its direction \(\vec{d}\) must be perpendicular to both \(\vec{n}_1\) and \(\vec{n}_2\).
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
 
-    <section id="sec9-4">
-        <h2>9.4 The Intersection of Three Planes</h2>
-        <!-- Content reserved for later editing -->
-    </section>
+    <!-- 9.4 VIEW -->
+    <div id="sec9-4" class="view-section">
+        <section>
+            <h2>9.4 The Intersection of Three Planes</h2>
+            <div class="section-split">
+                <div class="section-text">
+                    <h3>Definition</h3>
+                    <div class="def-block">
+                        <p>The intersection of three planes in \(\mathbb{R}^3\) corresponds to the solution set of a system of three linear equations in three variables (\(x, y, z\)). Geometrically, there are <strong>8 distinct configurations</strong> classified into <strong>consistent</strong> (at least one solution) and <strong>inconsistent</strong> (no common solution) systems.</p>
+                    </div>
+                    <h3>Core Concepts</h3>
+                    <div class="concept-block">
+                        <p><strong>Consistent Systems (Solutions Exist — 4 Cases):</strong></p>
+                        <ol style="margin-left:20px; margin-bottom:10px;">
+                            <li><strong>Intersect at a single point:</strong> Unique solution \((x, y, z)\); normal vectors are non-coplanar (\(\vec{n}_1 \cdot (\vec{n}_2 \times \vec{n}_3) \neq 0\)).</li>
+                            <li><strong>Intersect along a common line (Sheaf of planes):</strong> Infinitely many solutions with 1 parameter (\(t\)); row reduction yields one row of zeros (\(0 = 0\)).</li>
+                            <li><strong>Two coincident planes intersecting a third plane:</strong> Intersect along a straight line (1 parameter \(t\)); two equations are scalar multiples of each other.</li>
+                            <li><strong>Three coincident planes:</strong> All three equations are scalar multiples; infinitely many solutions with 2 parameters (\(s, t\)).</li>
+                        </ol>
+                        <p><strong>Inconsistent Systems (No Common Solution — 4 Cases):</strong></p>
+                        <ol style="margin-left:20px;">
+                            <li><strong>Three parallel distinct planes:</strong> All normal vectors are scalar multiples, but constants are not proportional.</li>
+                            <li><strong>Two coincident planes parallel to a third:</strong> Two equations are multiples, while the third shares the same normal direction with a different constant ratio.</li>
+                            <li><strong>Two parallel distinct planes intersected by a third:</strong> Two normal vectors are multiples (with inconsistent constants), while the third cuts across both in two parallel lines.</li>
+                            <li><strong>Triangular prism configuration:</strong> Pairs of planes intersect in three parallel lines, but there is no single point common to all three; normals are coplanar (\(\vec{n}_1 \cdot (\vec{n}_2 \times \vec{n}_3) = 0\)), and elimination yields a contradiction such as \(0 = k\) (\(k \neq 0\)).</li>
+                        </ol>
+                    </div>
+                    <h3>Important Formulas</h3>
+                    <div class="formula-block">
+                        <p>Scalar Triple Product Test for Normals: \(\vec{n}_1 \cdot (\vec{n}_2 \times \vec{n}_3)\)</p>
+                        <p>\(\bullet\) If \(\vec{n}_1 \cdot (\vec{n}_2 \times \vec{n}_3) \neq 0 \implies\) Normals are non-coplanar \(\implies\) Unique single-point intersection.</p>
+                        <p>\(\bullet\) If \(\vec{n}_1 \cdot (\vec{n}_2 \times \vec{n}_3) = 0 \implies\) Normals are coplanar \(\implies\) Either a line/plane of intersection or an inconsistent system.</p>
+                    </div>
+                    <h3>Quick Example</h3>
+                    <div class="example-block">
+                        <p>Consider \(\pi_1: x + y + z = 2\), \(\pi_2: 2x - y + z = 4\), and \(\pi_3: 3x + 2z = 8\). Notice \(\vec{n}_1 + \vec{n}_2 = (3, 0, 2) = \vec{n}_3\), so the normals are coplanar. Adding equations (1) and (2) gives \(3x + 2z = 6\), which contradicts \(\pi_3\) (\(3x + 2z = 8\)). Thus, the three planes form a <strong>triangular prism</strong> with no solution.</p>
+                    </div>
+                </div>
+                <div class="section-visual">
+                    <div class="visual-title">Key 3-Plane Geometric Configurations</div>
+                    <svg viewBox="0 0 420 340" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="12" y="10" width="190" height="152" rx="6" fill="#eef4ff" stroke="#cad4e2"/>
+                        <text x="107" y="29" font-size="12" font-weight="bold" text-anchor="middle" fill="#2c4260">1. Single Point (Unique)</text>
+                        <polygon points="45,85 165,85 145,120 25,120" fill="#4472b9" fill-opacity="0.25" stroke="#4472b9"/>
+                        <polygon points="75,45 135,45 135,140 75,140" fill="#509368" fill-opacity="0.22" stroke="#509368"/>
+                        <polygon points="55,58 155,128 135,142 35,72" fill="#9c68b8" fill-opacity="0.22" stroke="#9c68b8"/>
+                        <circle cx="105" cy="95" r="5" fill="#d9534f"/>
+                        <text x="107" y="153" font-size="10.5" text-anchor="middle" fill="#333">n₁ · (n₂ × n₃) ≠ 0</text>
+                        <rect x="218" y="10" width="190" height="152" rx="6" fill="#f3f7fb" stroke="#cad4e2"/>
+                        <text x="313" y="29" font-size="12" font-weight="bold" text-anchor="middle" fill="#326b47">2. Common Line (Sheaf)</text>
+                        <polygon points="255,95 370,95 355,115 240,115" fill="#4472b9" fill-opacity="0.25" stroke="#4472b9"/>
+                        <polygon points="275,48 345,48 330,138 260,138" fill="#509368" fill-opacity="0.22" stroke="#509368"/>
+                        <polygon points="255,60 365,130 350,140 240,70" fill="#d6942c" fill-opacity="0.22" stroke="#d6942c"/>
+                        <line x1="250" y1="105" x2="365" y2="105" stroke="#d9534f" stroke-width="2.6"/>
+                        <text x="313" y="153" font-size="10.5" text-anchor="middle" fill="#333">1 Parameter (t), 0 = 0</text>
+                        <rect x="12" y="176" width="190" height="152" rx="6" fill="#fff7e8" stroke="#cad4e2"/>
+                        <text x="107" y="195" font-size="12" font-weight="bold" text-anchor="middle" fill="#9e6611">3. Triangular Prism</text>
+                        <polygon points="107,215 62,290 152,290" fill="#d6942c" fill-opacity="0.2" stroke="#d6942c" stroke-width="2"/>
+                        <line x1="120" y1="200" x2="48" y2="305" stroke="#4472b9" stroke-width="2"/>
+                        <line x1="94" y1="200" x2="166" y2="305" stroke="#509368" stroke-width="2"/>
+                        <line x1="42" y1="290" x2="172" y2="290" stroke="#9c68b8" stroke-width="2"/>
+                        <text x="107" y="320" font-size="10.5" text-anchor="middle" fill="#d9534f" font-weight="bold">No common point (0 = k)</text>
+                        <rect x="218" y="176" width="190" height="152" rx="6" fill="#fdf8ff" stroke="#cad4e2"/>
+                        <text x="313" y="195" font-size="12" font-weight="bold" text-anchor="middle" fill="#6b3e85">4. 2 Parallel + 1 Intersecting</text>
+                        <line x1="242" y1="238" x2="384" y2="238" stroke="#4472b9" stroke-width="2.4"/>
+                        <line x1="242" y1="278" x2="384" y2="278" stroke="#4472b9" stroke-width="2.4"/>
+                        <line x1="275" y1="210" x2="345" y2="302" stroke="#d9534f" stroke-width="2.4"/>
+                        <circle cx="296" cy="238" r="3.5" fill="#d9534f"/>
+                        <circle cx="326" cy="278" r="3.5" fill="#d9534f"/>
+                        <text x="313" y="320" font-size="10.5" text-anchor="middle" fill="#333">2 parallel lines, no common pt</text>
+                    </svg>
+                    <div class="visual-caption">
+                        <strong>Decision Workflow:</strong> First check if any normal vectors are scalar multiples (parallel/coincident planes). If not, compute \(\vec{n}_1 \cdot (\vec{n}_2 \times \vec{n}_3)\) to distinguish a single point from a sheaf or triangular prism.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
 
-    <section id="sec9-5">
-        <h2>9.5 The Distance from a Point to a Line in \(R^2\) and \(R^3\)</h2>
-        <!-- Content reserved for later editing -->
-    </section>
+    <!-- 9.5 VIEW -->
+    <div id="sec9-5" class="view-section">
+        <section>
+            <h2>9.5 The Distance from a Point to a Line in \(\mathbb{R}^2\) and \(\mathbb{R}^3\)</h2>
+            <div class="section-split">
+                <div class="section-text">
+                    <h3>Definition</h3>
+                    <div class="def-block">
+                        <p>The <strong>distance from a point \(P\) to a line \(L\)</strong> is defined as the length of the <strong>perpendicular</strong> line segment drawn from point \(P\) to line \(L\). This represents the shortest possible distance between the point and any point on the line.</p>
+                    </div>
+                    <h3>Core Concepts</h3>
+                    <div class="concept-block">
+                        <ul style="margin-left:20px;">
+                            <li><strong>In \(\mathbb{R}^2\):</strong> We can find the shortest distance by projecting vector \(\vec{QP}\) (where \(Q\) is any known point on the line) onto the line's normal vector \(\vec{n} = (A, B)\), leading directly to the standard Cartesian distance formula.</li>
+                            <li><strong>In \(\mathbb{R}^3\):</strong> Because a line in 3-space does not have a unique normal vector, we construct a parallelogram using a point \(Q\) on the line and the line's direction vector \(\vec{d}\). The area of the parallelogram is \(\|\vec{QP} \times \vec{d}\|\), and dividing by the base length \(\|\vec{d}\|\) yields the perpendicular height \(d\).</li>
+                            <li><strong>Distance between parallel lines:</strong> Pick any convenient point \(P\) on the first line and compute its perpendicular distance to the second line.</li>
+                        </ul>
+                    </div>
+                    <h3>Important Formulas</h3>
+                    <div class="formula-block">
+                        <p><strong>Point \(P(x_0, y_0)\) to Line \(Ax + By + C = 0\) in \(\mathbb{R}^2\):</strong>
+                            $$d = \frac{|Ax_0 + By_0 + C|}{\sqrt{A^2 + B^2}}$$
+                        </p>
+                        <p><strong>Point \(P\) to Line \(\vec{r} = \vec{r}_0 + t\vec{d}\) (passing through \(Q\)) in \(\mathbb{R}^3\):</strong>
+                            $$d = \frac{\|\vec{QP} \times \vec{d}\|}{\|\vec{d}\|}$$
+                        </p>
+                        <p><strong>Alternative Projection Method in \(\mathbb{R}^3\):</strong>
+                            $$d = \sqrt{\|\vec{QP}\|^2 - \left(\frac{\vec{QP} \cdot \vec{d}}{\|\vec{d}\|}\right)^2}$$
+                        </p>
+                    </div>
+                    <h3>Quick Example</h3>
+                    <div class="example-block">
+                        <p>Find the distance from \(P(3, 1, -2)\) to the line \(\vec{r} = (1, 0, 2) + t(2, -1, 2)\). Let \(Q(1, 0, 2)\), so \(\vec{QP} = (2, 1, -4)\) and \(\vec{d} = (2, -1, 2)\). Then \(\vec{QP} \times \vec{d} = (-2, -12, -4)\), with magnitude \(\sqrt{4 + 144 + 16} = \sqrt{164}\). Since \(\|\vec{d}\| = \sqrt{4 + 1 + 4} = 3\), the distance is \(d = \frac{\sqrt{164}}{3} = \frac{2\sqrt{41}}{3}\).</p>
+                    </div>
+                </div>
+                <div class="section-visual">
+                    <div class="visual-title">Parallelogram Area Geometry in \(\mathbb{R}^3\)</div>
+                    <svg viewBox="0 0 420 270" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrVec" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                                <path d="M 0 1 L 10 5 L 0 9 z" fill="#2c4260"/>
+                            </marker>
+                            <marker id="arrPurp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                                <path d="M 0 1 L 10 5 L 0 9 z" fill="#9c68b8"/>
+                            </marker>
+                        </defs>
+                        <polygon points="75,190 235,190 315,75 155,75" fill="#fff7e8" stroke="#d6942c" stroke-width="1.5" stroke-dasharray="5,3"/>
+                        <text x="220" y="135" font-size="12" font-weight="bold" text-anchor="middle" fill="#b87914">Area = ||QP × d||</text>
+                        <line x1="25" y1="190" x2="395" y2="190" stroke="#4472b9" stroke-width="2.2"/>
+                        <text x="365" y="210" font-size="12" font-weight="bold" fill="#4472b9">Line L</text>
+                        <line x1="75" y1="190" x2="232" y2="190" stroke="#2c4260" stroke-width="3" marker-end="url(#arrVec)"/>
+                        <text x="150" y="212" font-size="12.5" font-weight="bold" fill="#2c4260">Base = ||d||</text>
+                        <line x1="75" y1="190" x2="151" y2="80" stroke="#9c68b8" stroke-width="2.6" marker-end="url(#arrPurp)"/>
+                        <text x="82" y="128" font-size="12.5" font-weight="bold" fill="#9c68b8">QP</text>
+                        <line x1="155" y1="75" x2="155" y2="190" stroke="#d9534f" stroke-width="2.4" stroke-dasharray="4,3"/>
+                        <polyline points="155,178 167,178 167,190" fill="none" stroke="#d9534f" stroke-width="1.6"/>
+                        <text x="163" y="162" font-size="12" font-weight="bold" fill="#d9534f">Height d</text>
+                        <circle cx="75" cy="190" r="4.5" fill="#2c4260"/>
+                        <text x="58" y="210" font-size="12.5" font-weight="bold" fill="#2c4260">Q</text>
+                        <circle cx="155" cy="75" r="4.5" fill="#d9534f"/>
+                        <text x="148" y="61" font-size="12.5" font-weight="bold" fill="#d9534f">P</text>
+                    </svg>
+                    <div class="visual-caption">
+                        <strong>Why Cross Product Gives Distance:</strong> \(\text{Area} = \text{Base} \times \text{Height} \implies \|\vec{QP} \times \vec{d}\| = \|\vec{d}\| \cdot d\), so dividing by \(\|\vec{d}\|\) isolates the perpendicular distance \(d\).
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
 
-    <section id="sec9-6">
-        <h2>9.6 The Distance from a Point to a Plane</h2>
-        <!-- Content reserved for later editing -->
-    </section>
+    <!-- 9.6 VIEW -->
+    <div id="sec9-6" class="view-section">
+        <section>
+            <h2>9.6 The Distance from a Point to a Plane</h2>
+            <div class="section-split">
+                <div class="section-text">
+                    <h3>Definition</h3>
+                    <div class="def-block">
+                        <p>The <strong>distance from a point \(P\) to a plane \(\pi\)</strong> in \(\mathbb{R}^3\) is the length of the perpendicular segment connecting \(P\) to the plane, which equals the magnitude of the scalar projection of vector \(\vec{QP}\) (for any point \(Q\) on \(\pi\)) onto the plane's normal vector \(\vec{n}\).</p>
+                    </div>
+                    <h3>Core Concepts</h3>
+                    <div class="concept-block">
+                        <ul style="margin-left:20px;">
+                            <li><strong>Projection Geometry:</strong> Given any point \(Q(x_1, y_1, z_1)\) on the plane \(Ax + By + Cz + D = 0\), we know \(Ax_1 + By_1 + Cz_1 = -D\). Projecting \(\vec{QP} = (x_0 - x_1, y_0 - y_1, z_0 - z_1)\) onto \(\vec{n} = (A, B, C)\) simplifies cleanly to the Cartesian distance formula.</li>
+                            <li><strong>Distance between two parallel planes:</strong> Ensure both plane equations have identical normal coefficients \((A, B, C)\), then either pick a point on one plane and find its distance to the other, or apply \(d = \frac{|D_2 - D_1|}{\sqrt{A^2 + B^2 + C^2}}\).</li>
+                            <li><strong>Distance between skew lines:</strong> Two skew lines lie in unique parallel planes whose common normal is \(\vec{n} = \vec{d}_1 \times \vec{d}_2\). Projecting the vector connecting a point on each line onto \(\vec{n}\) gives the shortest distance between the skew lines.</li>
+                        </ul>
+                    </div>
+                    <h3>Important Formulas</h3>
+                    <div class="formula-block">
+                        <p><strong>Point \(P(x_0, y_0, z_0)\) to Plane \(Ax + By + Cz + D = 0\):</strong>
+                            $$d = \frac{|Ax_0 + By_0 + Cz_0 + D|}{\sqrt{A^2 + B^2 + C^2}}$$
+                        </p>
+                        <p><strong>Vector Projection Form (with \(Q\) on the plane):</strong>
+                            $$d = \frac{|\vec{QP} \cdot \vec{n}|}{\|\vec{n}\|}$$
+                        </p>
+                        <p><strong>Distance Between Parallel Planes \(Ax + By + Cz + D_1 = 0\) and \(Ax + By + Cz + D_2 = 0\):</strong>
+                            $$d = \frac{|D_2 - D_1|}{\sqrt{A^2 + B^2 + C^2}}$$
+                        </p>
+                        <p><strong>Distance Between Skew Lines \(L_1\) and \(L_2\):</strong>
+                            $$d = \frac{|\vec{P_1P_2} \cdot (\vec{d}_1 \times \vec{d}_2)|}{\|\vec{d}_1 \times \vec{d}_2\|}$$
+                        </p>
+                    </div>
+                    <h3>Quick Example</h3>
+                    <div class="example-block">
+                        <p>Find the distance from \(P(2, -1, 4)\) to the plane \(2x - y + 2z - 9 = 0\). Substitute the coordinates of \(P\) into the formula:
+                            $$d = \frac{|2(2) - (-1) + 2(4) - 9|}{\sqrt{2^2 + (-1)^2 + 2^2}} = \frac{|4 + 1 + 8 - 9|}{\sqrt{9}} = \frac{4}{3}.$$
+                        </p>
+                    </div>
+                </div>
+                <div class="section-visual">
+                    <div class="visual-title">Scalar Projection of \(\vec{QP}\) onto Normal \(\vec{n}\)</div>
+                    <svg viewBox="0 0 420 270" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrRed2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                                <path d="M 0 1 L 10 5 L 0 9 z" fill="#d9534f"/>
+                            </marker>
+                            <marker id="arrPurp2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                                <path d="M 0 1 L 10 5 L 0 9 z" fill="#9c68b8"/>
+                            </marker>
+                        </defs>
+                        <polygon points="35,195 315,165 385,225 105,255" fill="#4472b9" fill-opacity="0.2" stroke="#4472b9" stroke-width="2"/>
+                        <text x="312" y="218" font-size="12" font-weight="bold" fill="#2c4260">Plane π</text>
+                        <line x1="145" y1="205" x2="145" y2="55" stroke="#d9534f" stroke-width="2.5" marker-end="url(#arrRed2)"/>
+                        <text x="115" y="72" font-size="12.5" font-weight="bold" fill="#d9534f">Normal n</text>
+                        <circle cx="255" cy="85" r="4.5" fill="#9c68b8"/>
+                        <text x="264" y="84" font-size="12.5" font-weight="bold" fill="#9c68b8">P(x₀, y₀, z₀)</text>
+                        <line x1="145" y1="205" x2="252" y2="88" stroke="#9c68b8" stroke-width="2.4" marker-end="url(#arrPurp2)"/>
+                        <text x="206" y="156" font-size="12.5" font-weight="bold" fill="#9c68b8">QP</text>
+                        <line x1="255" y1="85" x2="145" y2="85" stroke="#509368" stroke-width="1.8" stroke-dasharray="4,3"/>
+                        <line x1="255" y1="85" x2="255" y2="205" stroke="#509368" stroke-width="2.4" stroke-dasharray="4,3"/>
+                        <polyline points="255,193 243,193 243,205" fill="none" stroke="#509368" stroke-width="1.6"/>
+                        <text x="263" y="148" font-size="12.5" font-weight="bold" fill="#509368">d = |QP · n| / ||n||</text>
+                        <circle cx="145" cy="205" r="4.5" fill="#2c4260"/>
+                        <text x="122" y="222" font-size="12" font-weight="bold" fill="#2c4260">Q on π</text>
+                    </svg>
+                    <div class="visual-caption">
+                        <strong>Projection Insight:</strong> Regardless of where \(Q\) sits on plane \(\pi\), projecting \(\vec{QP}\) onto the perpendicular normal \(\vec{n}\) always yields the exact vertical height \(d\).
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
 
-    <section id="reference">
-        <h2>Formula &amp; Definition Reference Page</h2>
-        <p>Comprehensive summary of vector equations, Cartesian equations, cross products, and distance formulas for quick reference during problem solving.</p>
-    </section>
+    <!-- REFERENCE VIEW -->
+    <div id="reference" class="view-section">
+        <section>
+            <h2>Formula &amp; Definition Reference Page</h2>
+            <p>Comprehensive summary of vector equations, Cartesian equations, cross products, and distance formulas for quick reference during problem solving.</p>
+            <table class="ref-table">
+                <thead>
+                    <tr>
+                        <th style="width:28%;">Topic / Section</th>
+                        <th style="width:42%;">Key Formula / Algebraic Test</th>
+                        <th style="width:30%;">Geometric Interpretation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Line in \(\mathbb{R}^3\) (9.1)</strong></td>
+                        <td>\(\vec{r} = \vec{r}_0 + t\vec{d}\)<br>\(x = x_0 + td_x,\ y = y_0 + td_y,\ z = z_0 + td_z\)</td>
+                        <td>Line passing through \(\vec{r}_0\) in direction \(\vec{d}\).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Plane in \(\mathbb{R}^3\) (9.1–9.3)</strong></td>
+                        <td>\(Ax + By + Cz + D = 0\), normal \(\vec{n} = (A, B, C)\)</td>
+                        <td>Flat surface perpendicular to \(\vec{n}\).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Two Intersecting Planes (9.3)</strong></td>
+                        <td>\(\vec{d} = \vec{n}_1 \times \vec{n}_2 \neq \vec{0}\)</td>
+                        <td>Planes intersect along a line with direction \(\vec{d}\).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Three Planes Test (9.4)</strong></td>
+                        <td>\(\vec{n}_1 \cdot (\vec{n}_2 \times \vec{n}_3) \neq 0\)</td>
+                        <td>Normals are non-coplanar; planes intersect at 1 unique point.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Point to Line in \(\mathbb{R}^2\) (9.5)</strong></td>
+                        <td>\(d = \dfrac{|Ax_0 + By_0 + C|}{\sqrt{A^2 + B^2}}\)</td>
+                        <td>Perpendicular distance from \(P(x_0, y_0)\) to line in 2D.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Point to Line in \(\mathbb{R}^3\) (9.5)</strong></td>
+                        <td>\(d = \dfrac{\|\vec{QP} \times \vec{d}\|}{\|\vec{d}\|}\)</td>
+                        <td>Height of parallelogram formed by \(\vec{QP}\) and \(\vec{d}\).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Point to Plane in \(\mathbb{R}^3\) (9.6)</strong></td>
+                        <td>\(d = \dfrac{|Ax_0 + By_0 + Cz_0 + D|}{\sqrt{A^2 + B^2 + C^2}} = \dfrac{|\vec{QP} \cdot \vec{n}|}{\|\vec{n}\|}\)</td>
+                        <td>Scalar projection of \(\vec{QP}\) onto normal vector \(\vec{n}\).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Two Parallel Planes (9.6)</strong></td>
+                        <td>\(d = \dfrac{|D_2 - D_1|}{\sqrt{A^2 + B^2 + C^2}}\) (with identical \(\vec{n}\))</td>
+                        <td>Perpendicular distance between two parallel planes.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Two Skew Lines (9.6)</strong></td>
+                        <td>\(d = \dfrac{|\vec{P_1P_2} \cdot (\vec{d}_1 \times \vec{d}_2)|}{\|\vec{d}_1 \times \vec{d}_2\|}\)</td>
+                        <td>Shortest perpendicular distance between non-parallel, non-intersecting lines.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
 
-    <!-- Preview Practice 模块：保留 9.1-9.3 练习题，9.4-9.6 留空 -->
-    <section id="practice">
-        <h2>Preview Practice (Self-Check for Preview)</h2>
-        <p>Test your understanding with these practice problems. Click the <strong>Answer</strong> button below each question to reveal or hide the solution.</p>
+    <!-- PRACTICE / HOMEWORK VIEW -->
+    <div id="practice" class="view-section">
+        <section>
+            <h2>Preview Practice/Homework (Self-Check for Preview)</h2>
+            <p>Test your understanding with these practice problems. Click the <strong>Answer</strong> button below each question to reveal or hide the solution.</p>
 
-        <!-- 9.1 Practice -->
-        <div class="practice-subsection">
-            <h3>9.1 Practice Questions</h3>
+            <div class="practice-grid">
+                <!-- 9.1 Practice -->
+                <div class="practice-subsection">
+                    <h3>9.1 Practice Questions</h3>
+                    <div class="practice-question">
+                        <p><strong>Q1:</strong> Determine whether the lines \(\vec{r} = (1, 2, 3) + t(1, -1, 2)\) and \(\vec{r} = (2, 1, 5) + s(2, -2, 4)\) are parallel, intersecting, coincident, or skew.</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> Direction vectors are \(\vec{d}_1 = (1, -1, 2)\) and \(\vec{d}_2 = (2, -2, 4) = 2\vec{d}_1\), so they are parallel. Testing point \((2, 1, 5)\) in the first line yields a valid consistent parameter \(t=1\). Thus, the lines are <strong>coincident</strong>.</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q2:</strong> Find the intersection point of the line \(x = 1+t, y = 2-t, z = 3+2t\) and the plane \(2x + y - z + 4 = 0\).</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> Substitute parametric equations into the plane: \(2(1+t) + (2-t) - (3+2t) + 4 = 0 \implies 5 - t = 0 \implies t = 5\). Substituting \(t=5\) gives the point <strong>\((6, -3, 13)\)</strong>.</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q3:</strong> Explain why skew lines can only exist in three-dimensional space (\(\mathbb{R}^3\) or higher) and not in two-dimensional space (\(\mathbb{R}^2\)).</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> In \(\mathbb{R}^2\), all lines share the same flat plane, meaning non-parallel lines must cross and parallel lines share the same plane. In \(\mathbb{R}^3\), lines can exist at different elevations without intersecting and without being parallel (skew lines).</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q4:</strong> Determine if the line \(\vec{r} = (0, 1, 2) + t(1, 1, 1)\) intersects the plane \(x - y + z = 5\).</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> Substitute \(x = t, y = 1+t, z = 2+t\) into the plane equation: \(t - (1+t) + (2+t) = 5 \implies 1 + t = 5 \implies t = 4\). The intersection point is <strong>\((4, 5, 6)\)</strong>.</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q5:</strong> Given a line with direction vector \(\vec{d} = (2, 3, -1)\) and a plane with normal vector \(\vec{n} = (4, -1, 5)\), what is their geometric relationship?</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> Compute dot product \(\vec{d} \cdot \vec{n} = 2(4) + 3(-1) + (-1)(5) = 8 - 3 - 5 = 0\). Since \(\vec{d} \perp \vec{n}\), the line is <strong>parallel to the plane</strong> (or lies within it).</div>
+                    </div>
+                </div>
+
+                <!-- 9.2 Practice -->
+                <div class="practice-subsection">
+                    <h3>9.2 Practice Questions</h3>
+                    <div class="practice-question">
+                        <p><strong>Q1:</strong> State the three possible types of solution sets for a linear system of three equations in three variables.</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> 1. Unique solution (single point); 2. Infinitely many solutions (line or plane); 3. No solution (inconsistent system).</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q2:</strong> Solve the linear system: \(x + y + z = 6\), \(2x - y + 3z = 14\), \(x + 2y - z = 2\).</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> Using Gaussian elimination, the unique solution is <strong>\(x = 1, y = 2, z = 3\)</strong>.</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q3:</strong> What does a resulting statement like \(0 = 5\) signify during the row reduction of a linear system?</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> It means the system is <strong>inconsistent</strong> and has <strong>no solution</strong>.</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q4:</strong> Solve the dependent system: \(x + y = 3\) and \(2x + 2y = 6\).</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> The second equation is a multiple of the first. There are <strong>infinitely many solutions</strong>: \(x = t, y = 3 - t\) (\(t \in \mathbb{R}\)).</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q5:</strong> What are the three elementary row operations used in Gaussian elimination?</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> 1. Interchange two rows; 2. Multiply a row by a non-zero scalar; 3. Add a multiple of one row to another row.</div>
+                    </div>
+                </div>
+
+                <!-- 9.3 Practice -->
+                <div class="practice-subsection">
+                    <h3>9.3 Practice Questions</h3>
+                    <div class="practice-question">
+                        <p><strong>Q1:</strong> What are the possible geometric relationships between two distinct planes in \(\mathbb{R}^3\)?</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> They can either be <strong>parallel distinct</strong> (no intersection) or <strong>intersecting along a straight line</strong>.</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q2:</strong> Determine the intersection of the planes \(x + y + z = 3\) and \(2x + 2y + 2z = 8\).</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> The second plane simplifies to \(x + y + z = 4\). Since constants differ while normal vectors match, they are <strong>parallel distinct (no solution)</strong>.</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q3:</strong> How do you find the direction vector of the line of intersection of two intersecting planes?</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> By taking the <strong>cross product</strong> of their normal vectors: \(\vec{d} = \vec{n}_1 \times \vec{n}_2\).</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q4:</strong> Find the direction vector for the line of intersection between \(x + y - z = 1\) and \(2x - y + z = 2\).</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> \(\vec{d} = (1, 1, -1) \times (2, -1, 1) = (0, -3, -3)\), which is proportional to <strong>\((0, 1, 1)\)</strong>.</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q5:</strong> If two planes have normal vectors that are scalar multiples (\(\vec{n}_1 = k\vec{n}_2\)), what can be said about their intersection?</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> They are either parallel distinct (no solution) or coincident (infinitely many solutions).</div>
+                    </div>
+                </div>
+
+                <!-- 9.4 Practice -->
+                <div class="practice-subsection">
+                    <h3>9.4 Practice Questions</h3>
+                    <div class="practice-question">
+                        <p><strong>Q1:</strong> How many geometric configurations exist for the intersection of three planes in \(\mathbb{R}^3\), and how are they divided?</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> There are <strong>8 configurations</strong> in total: <strong>4 consistent cases</strong> (1 single point, 2 line of intersection with distinct planes, 3 line of intersection with two coincident planes, 4 three coincident planes) and <strong>4 inconsistent cases</strong> (no common solution).</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q2:</strong> Use the scalar triple product of normal vectors to determine whether the planes \(x + 2y - z = 3\), \(2x - y + z = 1\), and \(x + y + z = 4\) intersect at a single point.</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> \(\vec{n}_1 = (1, 2, -1)\), \(\vec{n}_2 = (2, -1, 1)\), \(\vec{n}_3 = (1, 1, 1)\). First compute \(\vec{n}_2 \times \vec{n}_3 = ((-1)(1) - (1)(1),\ -(2(1) - 1(1)),\ 2(1) - (-1)(1)) = (-2, -1, 3)\). Then \(\vec{n}_1 \cdot (\vec{n}_2 \times \vec{n}_3) = 1(-2) + 2(-1) + (-1)(3) = -7 \neq 0\). Since the triple product is non-zero, the planes intersect at <strong>one unique point</strong>.</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q3:</strong> Describe the geometry of the system: \(x - y + 2z = 5\), \(2x - 2y + 4z = 10\), and \(3x + y - z = 2\).</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> The second equation is exactly \(2\) times the first equation, so those two planes are <strong>coincident</strong>. The third plane is not parallel to them (\(\vec{n}_3\) is not a multiple of \(\vec{n}_1\)), so all three planes intersect along a <strong>single straight line</strong>.</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q4:</strong> Determine the geometric configuration of: \(x + y + z = 1\), \(x + 2y + 3z = 4\), and \(2x + 3y + 4z = 7\).</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> Notice that \(\vec{n}_1 + \vec{n}_2 = (2, 3, 4) = \vec{n}_3\), so the normal vectors are coplanar. Adding the first two equations gives \(2x + 3y + 4z = 5\), which contradicts the third equation (\(2x + 3y + 4z = 7\)). Since no two planes are parallel, they form a <strong>triangular prism</strong> (no solution).</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q5:</strong> Find the line of intersection of the three planes: \(x + y + z = 4\), \(x - y + z = 2\), and \(2x + 2z = 6\).</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> Adding the first two equations yields \(2x + 2z = 6\), which is identical to the third equation. Thus \(x + z = 3\) and \(y = 1\). Letting \(z = t\), we get \(x = 3 - t\). The three planes form a sheaf intersecting along the line <strong>\(\vec{r} = (3, 1, 0) + t(-1, 0, 1),\ t \in \mathbb{R}\)</strong>.</div>
+                    </div>
+                </div>
+
+                <!-- 9.5 Practice -->
+                <div class="practice-subsection">
+                    <h3>9.5 Practice Questions</h3>
+                    <div class="practice-question">
+                        <p><strong>Q1:</strong> Find the perpendicular distance from the point \(P(4, -2)\) to the line \(3x - 4y + 5 = 0\) in \(\mathbb{R}^2\).</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> Apply the 2D formula: \(d = \dfrac{|3(4) - 4(-2) + 5|}{\sqrt{3^2 + (-4)^2}} = \dfrac{|12 + 8 + 5|}{\sqrt{25}} = \dfrac{25}{5} = \mathbf{5}\) units.</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q2:</strong> Calculate the distance from \(P(1, 2, 3)\) to the line \(\vec{r} = (2, 0, 1) + t(1, 2, -2)\) in \(\mathbb{R}^3\).</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> Let \(Q(2, 0, 1)\), so \(\vec{QP} = (-1, 2, 2)\) and \(\vec{d} = (1, 2, -2)\). Compute \(\vec{QP} \times \vec{d} = (-8, 0, -4)\). Then \(\|\vec{QP} \times \vec{d}\| = \sqrt{64 + 0 + 16} = \sqrt{80} = 4\sqrt{5}\), and \(\|\vec{d}\| = \sqrt{1 + 4 + 4} = 3\). Thus \(d = \mathbf{\dfrac{4\sqrt{5}}{3}}\).</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q3:</strong> Why cannot we use the 2D formula \(d = \frac{|Ax_0 + By_0 + C|}{\sqrt{A^2 + B^2}}\) directly for a line in \(\mathbb{R}^3\)?</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> In \(\mathbb{R}^3\), a single linear equation \(Ax + By + Cz + D = 0\) represents a <strong>plane</strong>, not a line, because a line in 3D has infinitely many perpendicular directions rather than a single unique normal vector.</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q4:</strong> Find the distance between the two parallel lines in \(\mathbb{R}^2\): \(5x + 12y - 10 = 0\) and \(5x + 12y + 16 = 0\).</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> Pick point \(P(2, 0)\) on the first line (since \(5(2) + 12(0) - 10 = 0\)). Its distance to the second line is \(d = \dfrac{|5(2) + 12(0) + 16|}{\sqrt{5^2 + 12^2}} = \dfrac{26}{13} = \mathbf{2}\) units.</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q5:</strong> Find the shortest distance from the origin \(O(0, 0, 0)\) to the line \(x = 1 + t,\ y = 2 - t,\ z = 2t\).</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> Using \(Q(1, 2, 0)\), \(\vec{QO} = (-1, -2, 0)\) and \(\vec{d} = (1, -1, 2)\). Then \(\vec{QO} \times \vec{d} = (-4, 2, 3)\), with magnitude \(\sqrt{16 + 4 + 9} = \sqrt{29}\). Since \(\|\vec{d}\| = \sqrt{1 + 1 + 4} = \sqrt{6}\), \(d = \mathbf{\sqrt{\dfrac{29}{6}}}\) (or \(\frac{\sqrt{174}}{6}\)).</div>
+                    </div>
+                </div>
+
+                <!-- 9.6 Practice -->
+                <div class="practice-subsection">
+                    <h3>9.6 Practice Questions</h3>
+                    <div class="practice-question">
+                        <p><strong>Q1:</strong> Find the perpendicular distance from the point \(P(3, -2, 5)\) to the plane \(2x - 3y + 6z - 14 = 0\).</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> \(d = \dfrac{|2(3) - 3(-2) + 6(5) - 14|}{\sqrt{2^2 + (-3)^2 + 6^2}} = \dfrac{|6 + 6 + 30 - 14|}{\sqrt{4 + 9 + 36}} = \dfrac{28}{7} = \mathbf{4}\) units.</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q2:</strong> Calculate the distance between the two parallel planes \(\pi_1: x - 2y + 2z = 5\) and \(\pi_2: 2x - 4y + 4z = 22\).</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> Divide \(\pi_2\) by 2 so both equations share the same normal vector \((1, -2, 2)\): \(\pi_2: x - 2y + 2z - 11 = 0\) and \(\pi_1: x - 2y + 2z - 5 = 0\). Then \(d = \dfrac{|-11 - (-5)|}{\sqrt{1^2 + (-2)^2 + 2^2}} = \dfrac{6}{3} = \mathbf{2}\) units.</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q3:</strong> If the distance from a point \(P\) to a plane \(\pi\) is calculated to be \(0\), what does that tell you about point \(P\)?</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> Point \(P\) <strong>lies directly on the plane</strong> \(\pi\) (its coordinates satisfy the plane's Cartesian equation).</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q4:</strong> Find the distance between the skew lines \(L_1: \vec{r} = (1, 0, -1) + s(1, 1, 0)\) and \(L_2: \vec{r} = (0, 2, 1) + t(0, 1, 1)\).</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> \(\vec{n} = \vec{d}_1 \times \vec{d}_2 = (1, 1, 0) \times (0, 1, 1) = (1, -1, 1)\), so \(\|\vec{n}\| = \sqrt{3}\). With \(P_1(1, 0, -1)\) and \(P_2(0, 2, 1)\), \(\vec{P_1P_2} = (-1, 2, 2)\). Thus \(d = \dfrac{|(-1)(1) + 2(-1) + 2(1)|}{\sqrt{3}} = \dfrac{|-1|}{\sqrt{3}} = \mathbf{\dfrac{1}{\sqrt{3}}}\) (or \(\frac{\sqrt{3}}{3}\)).</div>
+                    </div>
+                    <div class="practice-question">
+                        <p><strong>Q5:</strong> Find the value(s) of \(k\) such that the distance from \(P(1, k, 2)\) to the plane \(2x + y - 2z + 5 = 0\) is \(3\).</p>
+                        <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
+                        <div class="answer-content"><strong>Solution:</strong> Set up the distance equation: \(\dfrac{|2(1) + k - 2(2) + 5|}{\sqrt{2^2 + 1^2 + (-2)^2}} = 3 \implies \dfrac{|k + 3|}{3} = 3 \implies |k + 3| = 9\). Solving gives \(k + 3 = 9\) or \(k + 3 = -9\), so <strong>\(k = 6\) or \(k = -12\)</strong>.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- VIDEOS VIEW (双视频槽位) -->
+    <div id="videos" class="view-section">
+        <section>
+            <h2>Videos (Dual Lesson Players)</h2>
+            <p style="margin-bottom:16px;color:#4a5568;">Upload local video files (MP4, WebM, MOV) into Slot 1 or Slot 2. Use speed buttons, skip buttons, or keyboard arrow keys (\(\leftarrow / \rightarrow\)) to control playback.</p>
             
-            <div class="practice-question">
-                <p><strong>Q1:</strong> Determine whether the lines \(\vec{r} = (1, 2, 3) + t(1, -1, 2)\) and \(\vec{r} = (2, 1, 5) + s(2, -2, 4)\) are parallel, intersecting, coincident, or skew.</p>
-                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
-                <div class="answer-content"><strong>Solution:</strong> Direction vectors are \(\vec{d}_1 = (1, -1, 2)\) and \(\vec{d}_2 = (2, -2, 4) = 2\vec{d}_1\), so they are parallel. Testing point \((2, 1, 5)\) in the first line yields a valid consistent parameter \(t=1\). Thus, the lines are <strong>coincident</strong>.</div>
+            <div class="videos-container">
+                <!-- Video Slot 1 -->
+                <div class="video-slot-card" data-slot="1">
+                    <h3>Video Slot 1</h3>
+                    <div class="video-upload-box drop-zone">
+                        <label class="video-upload-label">Choose Video 1</label>
+                        <input type="file" class="video-file-input" accept="video/*" style="display:none;">
+                        <p class="video-file-name" style="color:#364e70;font-size:13.5px;">Click to upload or drag &amp; drop video file here</p>
+                    </div>
+                    <div class="video-wrapper">
+                        <video class="lesson-video" controls></video>
+                        <div class="seek-toast">+10s</div>
+                    </div>
+                    <div class="video-controls-bar">
+                        <div class="speed-group">
+                            <span style="font-weight:600;color:#2c4260;font-size:13px;">Speed:</span>
+                            <button type="button" class="speed-btn" data-speed="0.5">0.5x</button>
+                            <button type="button" class="speed-btn" data-speed="0.75">0.75x</button>
+                            <button type="button" class="speed-btn active" data-speed="1">1.0x</button>
+                            <button type="button" class="speed-btn" data-speed="1.25">1.25x</button>
+                            <button type="button" class="speed-btn" data-speed="1.5">1.5x</button>
+                            <button type="button" class="speed-btn" data-speed="2">2.0x</button>
+                        </div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;">
+                            <div style="display:flex;gap:6px;">
+                                <button type="button" class="skip-btn rewind-btn">« -10s</button>
+                                <button type="button" class="skip-btn forward-btn">+10s »</button>
+                            </div>
+                            <span class="video-hint">Active slot reacts to \(\leftarrow / \rightarrow\)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Slot 2 -->
+                <div class="video-slot-card" data-slot="2">
+                    <h3>Video Slot 2</h3>
+                    <div class="video-upload-box drop-zone">
+                        <label class="video-upload-label">Choose Video 2</label>
+                        <input type="file" class="video-file-input" accept="video/*" style="display:none;">
+                        <p class="video-file-name" style="color:#364e70;font-size:13.5px;">Click to upload or drag &amp; drop video file here</p>
+                    </div>
+                    <div class="video-wrapper">
+                        <video class="lesson-video" controls></video>
+                        <div class="seek-toast">+10s</div>
+                    </div>
+                    <div class="video-controls-bar">
+                        <div class="speed-group">
+                            <span style="font-weight:600;color:#2c4260;font-size:13px;">Speed:</span>
+                            <button type="button" class="speed-btn" data-speed="0.5">0.5x</button>
+                            <button type="button" class="speed-btn" data-speed="0.75">0.75x</button>
+                            <button type="button" class="speed-btn active" data-speed="1">1.0x</button>
+                            <button type="button" class="speed-btn" data-speed="1.25">1.25x</button>
+                            <button type="button" class="speed-btn" data-speed="1.5">1.5x</button>
+                            <button type="button" class="speed-btn" data-speed="2">2.0x</button>
+                        </div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;">
+                            <div style="display:flex;gap:6px;">
+                                <button type="button" class="skip-btn rewind-btn">« -10s</button>
+                                <button type="button" class="skip-btn forward-btn">+10s »</button>
+                            </div>
+                            <span class="video-hint">Active slot reacts to \(\leftarrow / \rightarrow\)</span>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </section>
+    </div>
 
-            <div class="practice-question">
-                <p><strong>Q2:</strong> Find the intersection point of the line \(x = 1+t, y = 2-t, z = 3+2t\) and the plane \(2x + y - z + 4 = 0\).</p>
-                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
-                <div class="answer-content"><strong>Solution:</strong> Substitute parametric equations into the plane: \(2(1+t) + (2-t) - (3+2t) + 4 = 0 \implies 5 - t = 0 \implies t = 5\). Substituting \(t=5\) gives the point <strong>\((6, -3, 13)\)</strong>.</div>
+    <!-- TEXT VIEW -->
+    <div id="text" class="view-section">
+        <section>
+            <h2>Text (Collaborative Editor)</h2>
+            <div class="editor-container">
+                <textarea id="editor" class="editor-textarea" placeholder="Type notes or collaborative text here..."></textarea>
+                <p id="status" class="editor-status">Connecting to Firebase...</p>
             </div>
-
-            <div class="practice-question">
-                <p><strong>Q3:</strong> Explain why skew lines can only exist in three-dimensional space (\(R^3\) or higher) and not in two-dimensional space (\(R^2\)).</p>
-                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
-                <div class="answer-content"><strong>Solution:</strong> In \(R^2\), all lines share the same flat plane, meaning non-parallel lines must cross and parallel lines share the same plane. In \(R^3\), lines can exist at different elevations without intersecting and without being parallel (skew lines).</div>
-            </div>
-
-            <div class="practice-question">
-                <p><strong>Q4:</strong> Determine if the line \(\vec{r} = (0, 1, 2) + t(1, 1, 1)\) intersects the plane \(x - y + z = 5\).</p>
-                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
-                <div class="answer-content"><strong>Solution:</strong> Substitute \(x = t, y = 1+t, z = 2+t\) into the plane equation: \(t - (1+t) + (2+t) = 5 \implies 1 + t = 5 \implies t = 4\). The intersection point is <strong>\((4, 5, 6)\)</strong>.</div>
-            </div>
-
-            <div class="practice-question">
-                <p><strong>Q5:</strong> Given a line with direction vector \(\vec{d} = (2, 3, -1)\) and a plane with normal vector \(\vec{n} = (4, -1, 5)\), what is their geometric relationship?</p>
-                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
-                <div class="answer-content"><strong>Solution:</strong> Compute dot product \(\vec{d} \cdot \vec{n} = 2(4) + 3(-1) + (-1)(5) = 8 - 3 - 5 = 0\). Since \(\vec{d} \perp \vec{n}\), the line is **parallel to the plane** (or lies within it).</div>
-            </div>
-        </div>
-
-        <!-- 9.2 Practice -->
-        <div class="practice-subsection">
-            <h3>9.2 Practice Questions</h3>
-            
-            <div class="practice-question">
-                <p><strong>Q1:</strong> State the three possible types of solution sets for a linear system of three equations in three variables.</p>
-                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
-                <div class="answer-content"><strong>Solution:</strong> 1. Unique solution (single point); 2. Infinitely many solutions (line or plane); 3. No solution (inconsistent system).</div>
-            </div>
-
-            <div class="practice-question">
-                <p><strong>Q2:</strong> Solve the linear system: \(x + y + z = 6\), \(2x - y + 3z = 14\), \(x + 2y - z = 2\).</p>
-                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
-                <div class="answer-content"><strong>Solution:</strong> Using Gaussian elimination, the unique solution is <strong>\(x = 1, y = 2, z = 3\)</strong>.</div>
-            </div>
-
-            <div class="practice-question">
-                <p><strong>Q3:</strong> What does a resulting statement like \(0 = 5\) signify during the row reduction of a linear system?</p>
-                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
-                <div class="answer-content"><strong>Solution:</strong> It means the system is **inconsistent** and has <strong>no solution</strong>.</div>
-            </div>
-
-            <div class="practice-question">
-                <p><strong>Q4:</strong> Solve the dependent system: \(x + y = 3\) and \(2x + 2y = 6\).</p>
-                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
-                <div class="answer-content"><strong>Solution:</strong> The second equation is a multiple of the first. There are **infinitely many solutions**: \(x = t, y = 3 - t\) (\(t \in R\)).</div>
-            </div>
-
-            <div class="practice-question">
-                <p><strong>Q5:</strong> What are the three elementary row operations used in Gaussian elimination?</p>
-                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
-                <div class="answer-content"><strong>Solution:</strong> 1. Interchange two rows; 2. Multiply a row by a non-zero scalar; 3. Add a multiple of one row to another row.</div>
-            </div>
-        </div>
-
-        <!-- 9.3 Practice -->
-        <div class="practice-subsection">
-            <h3>9.3 Practice Questions</h3>
-            
-            <div class="practice-question">
-                <p><strong>Q1:</strong> What are the possible geometric relationships between two distinct planes in \(R^3\)?</p>
-                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
-                <div class="answer-content"><strong>Solution:</strong> They can either be **parallel distinct** (no intersection) or **intersecting along a straight line**.</div>
-            </div>
-
-            <div class="practice-question">
-                <p><strong>Q2:</strong> Determine the intersection of the planes \(x + y + z = 3\) and \(2x + 2y + 2z = 8\).</p>
-                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
-                <div class="answer-content"><strong>Solution:</strong> The second plane simplifies to \(x + y + z = 4\). Since constants differ while normal vectors match, they are **parallel distinct (no solution)**.</div>
-            </div>
-
-            <div class="practice-question">
-                <p><strong>Q3:</strong> How do you find the direction vector of the line of intersection of two intersecting planes?</p>
-                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
-                <div class="answer-content"><strong>Solution:</strong> By taking the **cross product** of their normal vectors: \(\vec{d} = \vec{n}_1 \times \vec{n}_2\).</div>
-            </div>
-
-            <div class="practice-question">
-                <p><strong>Q4:</strong> Find the direction vector for the line of intersection between \(x + y - z = 1\) and \(2x - y + z = 2\).</p>
-                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
-                <div class="answer-content"><strong>Solution:</strong> \(\vec{d} = (1, 1, -1) \times (2, -1, 1) = (0, -3, -3)\) or proportional to <strong>\((0, 1, 1)\)</strong>.</div>
-            </div>
-
-            <div class="practice-question">
-                <p><strong>Q5:</strong> If two planes have normal vectors that are scalar multiples (\(\vec{n}_1 = k\vec{n}_2\)), what can be said about their intersection?</p>
-                <button class="answer-btn" onclick="toggleAnswer(this)">Answer</button>
-                <div class="answer-content"><strong>Solution:</strong> They are either parallel distinct (no solution) or coincident (infinitely many solutions).</div>
-            </div>
-        </div>
-
-        <!-- 9.4-9.6 Practice placeholders -->
-        <div class="practice-subsection">
-            <h3>9.4 Practice Questions</h3>
-            <p style="color:#666; font-style:italic;">Content reserved for later editing.</p>
-        </div>
-        <div class="practice-subsection">
-            <h3>9.5 Practice Questions</h3>
-            <p style="color:#666; font-style:italic;">Content reserved for later editing.</p>
-        </div>
-        <div class="practice-subsection">
-            <h3>9.6 Practice Questions</h3>
-            <p style="color:#666; font-style:italic;">Content reserved for later editing.</p>
-        </div>
-    </section>
-
-    <!-- 多人在线协同文本框模块 -->
-    <section id="text">
-        <h2>Text (Collaborative Editor)</h2>
-        <div class="editor-container">
-            <textarea id="editor" class="editor-textarea" placeholder="在这里输入内容..."></textarea>
-            <p id="status" class="editor-status">正在连接 Firebase...</p>
-        </div>
-    </section>
+        </section>
+    </div>
 </main>
 <footer>
 CCT Assignment — Nelson Calculus &amp; Vectors 12 Chapter 9 Preview Website
 </footer>
 
-<!-- 答案切换脚本 -->
+<!-- 视图切换与交互脚本 -->
 <script>
+    // 1. 顶部导航栏单页面切换逻辑
+    const navLinks = document.querySelectorAll(".nav-link");
+    const viewSections = document.querySelectorAll(".view-section");
+
+    navLinks.forEach(link => {
+        link.addEventListener("click", (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute("data-target");
+
+            navLinks.forEach(l => l.classList.remove("active"));
+            link.classList.add("active");
+
+            viewSections.forEach(section => {
+                section.classList.remove("active");
+                if (section.id === targetId) {
+                    section.classList.add("active");
+                }
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // 重新渲染 MathJax 公式（切换页面后确保公式正常显示）
+            if (window.MathJax && window.MathJax.typeset) {
+                window.MathJax.typeset();
+            }
+        });
+    });
+
+    // 2. 练习题答案折叠脚本
     function toggleAnswer(btn) {
         const ans = btn.nextElementSibling;
         if (ans.style.display === "none" || ans.style.display === "") {
@@ -332,6 +974,147 @@ CCT Assignment — Nelson Calculus &amp; Vectors 12 Chapter 9 Preview Website
             btn.textContent = "Answer";
         }
     }
+
+    // 3. 双视频槽位控制器与方向键快进/快退逻辑
+    (function () {
+        const videoCards = document.querySelectorAll(".video-slot-card");
+        let activeVideo = null; // 当前聚焦或最后操作的视频
+
+        videoCards.forEach(card => {
+            const fileInput = card.querySelector(".video-file-input");
+            const dropZone = card.querySelector(".drop-zone");
+            const fileNameText = card.querySelector(".video-file-name");
+            const videoWrapper = card.querySelector(".video-wrapper");
+            const video = card.querySelector(".lesson-video");
+            const controlsBar = card.querySelector(".video-controls-bar");
+            const seekToast = card.querySelector(".seek-toast");
+            const speedButtons = card.querySelectorAll(".speed-btn");
+            const rewindBtn = card.querySelector(".rewind-btn");
+            const forwardBtn = card.querySelector(".forward-btn");
+
+            let currentObjectUrl = null;
+            let toastTimer = null;
+
+            function loadVideoFile(file) {
+                if (!file || !file.type.startsWith("video/")) {
+                    alert("Please select a valid video file.");
+                    return;
+                }
+                if (currentObjectUrl) {
+                    URL.revokeObjectURL(currentObjectUrl);
+                }
+                currentObjectUrl = URL.createObjectURL(file);
+                video.src = currentObjectUrl;
+                fileNameText.textContent = "Loaded: " + file.name;
+                videoWrapper.style.display = "block";
+                controlsBar.style.display = "flex";
+
+                const activeBtn = card.querySelector(".speed-btn.active");
+                if (activeBtn) {
+                    video.playbackRate = parseFloat(activeBtn.dataset.speed);
+                }
+            }
+
+            function showSeekToast(label) {
+                seekToast.textContent = label;
+                seekToast.classList.add("show");
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
+                    seekToast.classList.remove("show");
+                }, 650);
+            }
+
+            function skipVideo(seconds) {
+                if (!video.src) return;
+                const duration = isFinite(video.duration) ? video.duration : Infinity;
+                video.currentTime = Math.min(Math.max(0, video.currentTime + seconds), duration);
+                showSeekToast(seconds > 0 ? `+${seconds}s »` : `« ${seconds}s`);
+            }
+
+            fileInput.addEventListener("change", (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    loadVideoFile(e.target.files[0]);
+                }
+            });
+
+            dropZone.addEventListener("click", (e) => {
+                if (e.target !== fileInput && e.target.tagName !== "LABEL") {
+                    fileInput.click();
+                }
+            });
+
+            dropZone.addEventListener("dragover", (e) => {
+                e.preventDefault();
+                dropZone.classList.add("dragover");
+            });
+
+            dropZone.addEventListener("dragleave", () => {
+                dropZone.classList.remove("dragover");
+            });
+
+            dropZone.addEventListener("drop", (e) => {
+                e.preventDefault();
+                dropZone.classList.remove("dragover");
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    loadVideoFile(e.dataTransfer.files[0]);
+                }
+            });
+
+            speedButtons.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    speedButtons.forEach((b) => b.classList.remove("active"));
+                    btn.classList.add("active");
+                    video.playbackRate = parseFloat(btn.dataset.speed);
+                });
+            });
+
+            rewindBtn.addEventListener("click", () => {
+                activeVideo = video;
+                skipVideo(-10);
+            });
+            forwardBtn.addEventListener("click", () => {
+                activeVideo = video;
+                skipVideo(10);
+            });
+
+            video.addEventListener("play", () => {
+                activeVideo = video;
+            });
+            video.addEventListener("click", () => {
+                activeVideo = video;
+            });
+        });
+
+        // 监听全局左右方向键快进/快退 10 秒
+        document.addEventListener("keydown", (e) => {
+            const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : "";
+            if (tag === "textarea" || tag === "input") return;
+
+            if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+                if (!activeVideo || !activeVideo.src) {
+                    // 如果没有选中的视频，默认尝试寻找第一个有加载视频的播放器
+                    const firstVid = document.querySelector(".lesson-video");
+                    if (firstVid && firstVid.src) activeVideo = firstVid;
+                }
+                if (activeVideo && activeVideo.src) {
+                    e.preventDefault();
+                    const seconds = e.key === "ArrowRight" ? 10 : -10;
+                    const duration = isFinite(activeVideo.duration) ? activeVideo.duration : Infinity;
+                    activeVideo.currentTime = Math.min(Math.max(0, activeVideo.currentTime + seconds), duration);
+                    
+                    const card = activeVideo.closest(".video-slot-card");
+                    if (card) {
+                        const seekToast = card.querySelector(".seek-toast");
+                        if (seekToast) {
+                            seekToast.textContent = seconds > 0 ? `+${seconds}s »` : `« ${seconds}s`;
+                            seekToast.classList.add("show");
+                            setTimeout(() => seekToast.classList.remove("show"), 650);
+                        }
+                    }
+                }
+            }
+        });
+    })();
 </script>
 
 <!-- Firebase 协同逻辑 -->
@@ -357,16 +1140,14 @@ CCT Assignment — Nelson Calculus &amp; Vectors 12 Chapter 9 Preview Website
     const editor = document.getElementById("editor");
     const status = document.getElementById("status");
 
-    // 实时读取数据库变动
     onValue(editorRef, (snapshot) => {
         const data = snapshot.val();
         if (data !== null) {
             editor.value = data;
         }
-        status.textContent = "Firebase 已连接 ✓";
+        status.textContent = "Firebase Connected ✓";
     });
 
-    // 实时同步变动至数据库
     editor.addEventListener("input", () => {
         set(editorRef, editor.value);
     });
